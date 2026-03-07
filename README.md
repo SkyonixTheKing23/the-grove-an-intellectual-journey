@@ -88,14 +88,6 @@ When **Pexxelina** appears, the entire site transitions into a **soft twilight p
 
 ---
 
-# 🚀 How to run it
-
-Open the site:
-
-🔗 https://grove-your-intellectual-personality.netlify.app/
-
----
-
 # 👨‍💻 Made by
 
 **Skyonix**  
