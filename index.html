@@ -1,1339 +1,1363 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>The Grove — What's Your Intellectual Personality?</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* ==============================
-       Reset & Base
-    ============================== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<title>The Grove — What's Your Intellectual Personality?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gd:#0e1a08;--gm:#1a2a10;--gf:#2a4418;--gb:#4a7a2a;
+  --gg:#6aaa3a;--gp:#c8e8a8;--cr:#e8ede0;
+}
+html,body{min-height:100%;overflow-x:hidden;font-family:"Space Mono",monospace;image-rendering:pixelated;}
+a:link{color:#4a7a2a;}a:visited{color:#2a4a1a;}
 
-    html, body {
-      height: 100%; min-height: 100%;
-      overflow-x: hidden;
-      font-family: "Space Mono", monospace;
-    }
+/* ── PIXEL CANVAS ── */
+#pixel-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
-    body {
-      background-color: #e8ede0;
-      background-image:
-        radial-gradient(ellipse at 10% 90%, #c8d8a8 0%, transparent 50%),
-        radial-gradient(ellipse at 90% 10%, #d0ddb8 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, #dde8c8 0%, transparent 80%);
-      background-repeat: no-repeat;
-      background-size: cover;
-      display: flex;
-      flex-direction: column;
-      text-align: center;
-      min-height: calc(var(--vh, 1vh) * 100);
-    }
+/* ═══════════════════════════════════
+   INTRO SCREEN
+═══════════════════════════════════ */
+#intro-screen{
+  position:fixed;inset:0;z-index:50;background:#060310;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;transition:opacity 0.8s ease;
+}
+#intro-screen.hidden{opacity:0;pointer-events:none;}
 
-    a:link    { color: #4a7a2a; }
-    a:visited { color: #2a4a1a; }
+#intro-sky{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    #04021a 0%,#0a0528 10%,#140a38 18%,#1c1244 26%,
+    #18183a 34%,#121e2a 42%,#0e2218 52%,#0e2610 62%,
+    #122a0c 72%,#183008 82%,#1e3a0a 92%,#223e0e 100%);
+}
+#intro-sky::after{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 25% 18%,rgba(170,70,240,0.22) 0%,transparent 50%),
+    radial-gradient(ellipse at 75% 12%,rgba(70,190,80,0.16) 0%,transparent 45%),
+    radial-gradient(ellipse at 50% 55%,rgba(110,50,170,0.12) 0%,transparent 55%),
+    radial-gradient(ellipse at 80% 70%,rgba(60,160,60,0.10) 0%,transparent 40%);
+  animation:skyshift 9s ease-in-out infinite alternate;
+}
+@keyframes skyshift{0%{opacity:1}50%{opacity:0.45}100%{opacity:1}}
 
-    /* ==============================
-       Headings & Text
-    ============================== */
-    #text-box.title-font,
-    .question-font {
-      font-family: 'Press Start 2P', "Space Mono", monospace;
-    }
+/* stars */
+.px-star{position:absolute;image-rendering:pixelated;animation:startwink 2s step-end infinite;}
+.px-star.green{width:4px;height:4px;background:#90e070;}
+.px-star.purple{width:4px;height:4px;background:#d070f0;}
+.px-star.white{width:4px;height:4px;background:#f0f0ff;}
+.px-star.dim{width:2px;height:2px;opacity:0.4;}
+.px-star.big{width:6px;height:6px;}
+@keyframes startwink{0%,100%{opacity:1}35%{opacity:0.1}65%{opacity:0.9}80%{opacity:0.4}}
 
-    #text-box.title-font { font-size: 1.05em; line-height: 1.9; }
-    .question-font       { font-size: 0.82em; line-height: 2.0; }
+/* shooting star */
+.shoot{position:absolute;width:3px;height:3px;background:#fff;opacity:0;animation:shoot linear infinite;}
+@keyframes shoot{0%{opacity:0;transform:translate(0,0)}5%{opacity:1}35%{opacity:0;transform:translate(200px,100px)}100%{opacity:0;transform:translate(200px,100px)}}
 
-    #text-box {
-      font-size: 1.15em;
-      margin: 0 auto 30px auto;
-      max-width: 40%;
-      position: relative;
-      z-index: 1;
-    }
+/* moon */
+#px-moon{
+  position:absolute;top:44px;right:14%;width:52px;height:52px;
+  background:#d4c4f0;image-rendering:pixelated;opacity:0;
+  transition:opacity 2.2s ease;
+  box-shadow:4px 0 0 #b8a8e0,0 4px 0 #c8b8e8,-4px 0 0 #e8d8ff,0 -4px 0 #f0e8ff,
+    0 0 0 4px #c4b0e0,0 0 50px 14px rgba(190,150,240,0.32),
+    0 0 100px 30px rgba(130,70,200,0.16),0 0 150px 50px rgba(60,160,60,0.07);
+}
+#px-moon::before{content:'';position:absolute;top:10px;left:10px;width:10px;height:8px;
+  background:#b0a0d4;box-shadow:20px 18px 0 6px #c4b4e0,8px 26px 0 4px #aaa0cc;}
+#px-moon::after{content:'';position:absolute;top:-14px;left:-20px;width:6px;height:6px;
+  background:#e4d4ff;box-shadow:-6px 10px 0 4px rgba(200,160,255,0.55);}
 
-    #text-box.results-active { color: #1a2a10; }
+/* ground */
+#px-ground{
+  position:absolute;bottom:0;left:0;right:0;height:115px;
+  background:linear-gradient(180deg,#0e1e08,#090e04);
+  clip-path:polygon(0% 100%,0% 58%,2% 52%,5% 45%,8% 41%,12% 39%,15% 37%,
+    18% 35%,22% 32%,26% 31%,30% 33%,33% 37%,36% 41%,40% 45%,44% 47%,
+    48% 49%,52% 47%,56% 43%,60% 39%,64% 37%,68% 35%,72% 33%,76% 32%,
+    80% 33%,84% 37%,88% 41%,92% 45%,95% 49%,98% 52%,100% 58%,100% 100%);
+}
+#px-ground::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;
+  background:repeating-linear-gradient(90deg,#6aaa3a 0,#6aaa3a 8px,#8a3aaa 8px,#8a3aaa 16px,
+    #4a8a2a 16px,#4a8a2a 24px,#6a2a9a 24px,#6a2a9a 32px);opacity:0.75;}
+#px-ground::after{content:'';position:absolute;top:-36px;left:0;right:0;height:36px;
+  background:linear-gradient(to top,rgba(70,200,70,0.10) 0%,rgba(130,50,200,0.05) 60%,transparent 100%);}
 
-    /* ==============================
-       Overlay
-    ============================== */
-    #overlay {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(20,40,10,0.55);
-      z-index: 0; pointer-events: none;
-      opacity: 0; transition: opacity 0.3s ease;
-    }
+/* fireflies */
+.firefly{position:absolute;image-rendering:pixelated;animation:ffloat linear infinite;}
+.firefly.green{width:4px;height:4px;background:#90e050;box-shadow:0 0 5px 2px rgba(140,220,70,0.65);}
+.firefly.purple{width:4px;height:4px;background:#c060f0;box-shadow:0 0 5px 2px rgba(190,80,240,0.65);}
+.firefly.teal{width:2px;height:2px;background:#50d8c0;box-shadow:0 0 4px 2px rgba(60,210,180,0.55);}
+.firefly.gold{width:2px;height:2px;background:#f0c030;box-shadow:0 0 4px 2px rgba(240,190,40,0.55);}
+@keyframes ffloat{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  10%{opacity:1}50%{transform:translateY(-42vh) translateX(22px)}
+  90%{opacity:0.55}100%{transform:translateY(-84vh) translateX(-12px);opacity:0}}
 
-    /* ==============================
-       Container
-    ============================== */
-    #container {
-      text-align: center; position: relative; z-index: 1;
-      padding-top: 100px; flex: 1 1 auto;
-    }
-    #container.results-active {
-      padding-top: 50px; transition: padding-top 0.3s ease;
-    }
+/* ── CUTE PIXEL DECO ANIMATIONS ── */
+.px-mushroom{position:absolute;image-rendering:pixelated;animation:mushroomglow 3.2s ease-in-out infinite;}
+@keyframes mushroomglow{0%,100%{filter:drop-shadow(0 0 4px rgba(200,90,240,0.4))}50%{filter:drop-shadow(0 0 12px rgba(200,90,240,0.9));transform:translateY(-2px);}}
+.px-flower{position:absolute;image-rendering:pixelated;animation:flowersway 4.5s ease-in-out infinite;}
+@keyframes flowersway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.px-crystal{position:absolute;image-rendering:pixelated;animation:crystalpulse 2.8s ease-in-out infinite;}
+@keyframes crystalpulse{0%,100%{filter:drop-shadow(0 0 7px rgba(100,180,255,0.55));transform:translateY(0)}50%{filter:drop-shadow(0 0 16px rgba(150,90,255,1));transform:translateY(-5px)}}
+.px-butterfly{position:absolute;image-rendering:pixelated;animation:bfly 7s ease-in-out infinite;}
+@keyframes bfly{0%{transform:translate(0,0) scaleX(1)}25%{transform:translate(22px,-18px) scaleX(1)}50%{transform:translate(44px,4px) scaleX(-1)}75%{transform:translate(22px,14px) scaleX(-1)}100%{transform:translate(0,0) scaleX(1)}}
+.px-sparkle{position:absolute;image-rendering:pixelated;animation:sparkle 3.2s steps(4) infinite;}
+@keyframes sparkle{0%{transform:rotate(0deg) scale(1);opacity:0.55}50%{transform:rotate(180deg) scale(1.4);opacity:1}100%{transform:rotate(360deg) scale(1);opacity:0.55}}
+.px-snail{position:absolute;image-rendering:pixelated;animation:snailmove 18s linear infinite;}
+@keyframes snailmove{0%{transform:translateX(-20px)}100%{transform:translateX(140px)}}
+.px-frog{position:absolute;image-rendering:pixelated;animation:frogjump 5s ease-in-out infinite;}
+@keyframes frogjump{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}60%{transform:translateY(0)}}
+.px-bird-fly{position:absolute;image-rendering:pixelated;animation:birdacross 14s linear infinite;}
+@keyframes birdacross{0%{transform:translateX(-60px) translateY(0)}40%{transform:translateX(160px) translateY(-24px)}70%{transform:translateX(300px) translateY(10px)}100%{transform:translateX(500px) translateY(-10px)}}
 
-    /* ==============================
-       Buttons
-    ============================== */
-    button {
-      background-color: #2a3a1a;
-      color: #e8ede0;
-      padding: 10px 20px;
-      margin: 0 auto 15px auto;
-      font-size: 1em; cursor: pointer;
-      border-radius: 99px; border: 1px solid #2a3a1a;
-      display: block; font-family: "Space Mono", monospace;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      width: clamp(200px, 30%, 500px);
-    }
-    button:hover { background-color: #c8d8a8; color: #1a2a10; }
-    .dialogue-btn { background-color: #2a3a1a; }
-    .question-btn { background-color: #3a5020; }
+/* deco containers — wide side panels */
+#deco-left,#deco-right{position:absolute;bottom:0;width:260px;height:95%;pointer-events:none;z-index:4;}
+#deco-left{left:0;}
+#deco-right{right:0;}
 
-    @media (min-width: 1025px) and (max-width: 1400px) { button { width: clamp(200px,35%,450px); } }
-    @media (min-width: 769px)  and (max-width: 1024px) { button { width: clamp(160px,40%,400px); } }
-    @media (max-width: 768px)  { button { width: 70%; min-width: 140px; max-width: 300px; } }
+/* ── INTRO LOGO ── */
+#intro-logo{
+  position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;gap:18px;
+  opacity:0;transform:translateY(28px);animation:risein 1.1s cubic-bezier(0.16,1,0.3,1) 0.7s forwards;
+}
+@keyframes risein{to{opacity:1;transform:translateY(0);}}
 
-    /* ==============================
-       Dialogue Scenes & Creator Notes
-    ============================== */
-    .dialogue-scene,
-    #text-box.dialogue-scene {
-      background-color: #f4f8ec;
-      padding: 20px; border-radius: 10px;
-      border: 1px solid #4a7a2a;
-      margin: 0 auto 30px auto; max-width: 40%;
-    }
+.intro-eyebrow{
+  font-family:"Press Start 2P",monospace;font-size:0.44em;letter-spacing:5px;color:#c8e8a8;
+  animation:eyebrowglow 5s ease-in-out infinite 2s;
+}
+@keyframes eyebrowglow{
+  0%,100%{color:#c8e8a8;text-shadow:0 0 14px rgba(100,200,60,0.8);}
+  50%{color:#eab8ff;text-shadow:0 0 22px rgba(190,80,250,1),0 0 44px rgba(190,80,250,0.35);}
+}
 
-    .creator-note {
-      background: #f4f8ec; border: 2px solid #4a7a2a;
-      padding: 15px; border-radius: 10px;
-      display: block; margin: 0 auto 15px auto; max-width: 600px;
-    }
+.intro-title{
+  font-family:"Press Start 2P",monospace;font-size:clamp(2.2em,8vw,5em);
+  color:var(--cr);letter-spacing:4px;text-align:center;line-height:1.2;
+  text-shadow:4px 4px 0 #260e3a,8px 8px 0 #0a040e,0 0 50px rgba(200,150,255,0.22),0 0 90px rgba(90,200,90,0.10);
+  animation:titleglow 7s ease-in-out infinite 2s;
+}
+@keyframes titleglow{
+  0%,100%{text-shadow:4px 4px 0 #260e3a,8px 8px 0 #0a040e,0 0 50px rgba(200,150,255,0.22);}
+  50%{text-shadow:4px 4px 0 #0e2a10,8px 8px 0 #050e04,0 0 50px rgba(90,230,90,0.32);}
+}
 
-    /* ==============================
-       Speaker name tag
-    ============================== */
-    .speaker-tag {
-      display: inline-block;
-      font-family: 'Press Start 2P', "Space Mono", monospace;
-      font-size: 0.48em;
-      color: #fff;
-      border-radius: 99px;
-      padding: 3px 12px;
-      margin-bottom: 10px;
-    }
-    .speaker-tag.skyonix  { background: #3a7a2a; }
-    .speaker-tag.pexxelina{ background: #8a4a9a; }
+.intro-title-under{
+  width:0%;height:4px;margin:8px auto 0;
+  background:linear-gradient(90deg,#6aaa3a,#c040d0,#6aaa3a);
+  box-shadow:0 0 10px #9030c0;
+  animation:pixelgrow 1.1s steps(20,end) 1.9s forwards;
+}
+@keyframes pixelgrow{to{width:82%;}}
 
-    /* ==============================
-       Images / Sprites
-    ============================== */
-    img { max-width: 300px; margin-bottom: 20px; }
+.intro-sub{font-size:0.8em;color:rgba(220,185,255,0.72);font-style:italic;letter-spacing:2px;
+  opacity:0;animation:fadein 0.8s ease 2.3s forwards;}
+@keyframes fadein{to{opacity:1;}}
 
-    .result-icon-display {
-      font-size: 7em; display: block;
-      margin: 10px auto 20px auto;
-      animation: floatbob 3s ease-in-out infinite;
-      filter: drop-shadow(0 4px 12px rgba(74,122,42,0.3));
-    }
-    @keyframes floatbob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+#intro-sprites{display:flex;gap:36px;align-items:flex-end;opacity:0;animation:fadein 0.8s ease 2.7s forwards;}
 
-    #image img { width:100%; height:auto; max-width:inherit; max-height:100vh; }
+/* PIXEL ICONS ROW — no emojis, only SVG sprites */
+.intro-icons{display:flex;gap:16px;align-items:flex-end;opacity:0;animation:fadein 0.8s ease 3s forwards;}
+.intro-icon-item{display:flex;flex-direction:column;align-items:center;animation:runefly 3s ease-in-out infinite;}
+.intro-icon-item:nth-child(2){animation-delay:.3s}
+.intro-icon-item:nth-child(3){animation-delay:.6s}
+.intro-icon-item:nth-child(4){animation-delay:.9s}
+.intro-icon-item:nth-child(5){animation-delay:1.2s}
+.intro-icon-item:nth-child(6){animation-delay:1.5s}
+@keyframes runefly{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.08)}}
 
-    /* Dual sprite layout */
-    .dual-sprite {
-      display: flex; justify-content: center; align-items: flex-end;
-      gap: 30px; margin-bottom: 4px;
-    }
+/* ENTER BUTTON */
+#enter-btn{
+  font-family:"Press Start 2P",monospace;font-size:0.65em;padding:14px 34px;
+  background:linear-gradient(90deg,#2a1848,#1e3a14,#2a1848);background-size:200% 100%;
+  color:#e8d8ff;border:0;cursor:pointer;letter-spacing:2px;
+  clip-path:polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
+  box-shadow:4px 4px 0 #080412,8px 8px 0 #040208;
+  transition:background-position 0.4s ease,box-shadow 0.08s steps(2),transform 0.08s steps(2);
+  opacity:0;animation:fadein 0.8s ease 3.4s forwards;
+}
+#enter-btn:hover{background-position:100% 0;color:#fff;box-shadow:4px 4px 0 #2a1040,0 0 28px rgba(170,80,230,0.7),0 0 50px rgba(70,180,70,0.25);}
+#enter-btn:active{transform:translate(4px,4px);box-shadow:0 0 0;}
+.btn-cursor{animation:blink 0.9s step-end infinite 3.8s;display:inline-block;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-    /* ==============================
-       Sprite animation
-    ============================== */
-    .sprite-wrap {
-      display: flex; justify-content: center;
-      animation: spritebob 2s ease-in-out infinite;
-    }
-    .sprite-wrap.delay { animation-delay: 0.4s; }
-    @keyframes spritebob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+/* curtain */
+#curtain{position:fixed;inset:0;z-index:200;pointer-events:none;display:grid;grid-template-columns:repeat(16,1fr);}
+.curtain-tile{background:var(--gd);transform:scaleY(0);transform-origin:top;transition:transform 0.5s steps(8,end);}
+.curtain-tile.drop{transform:scaleY(1);}
+.curtain-tile.lift{transform:scaleY(0);transform-origin:bottom;}
 
-    /* ==============================
-       Result gallery
-    ============================== */
-    .result-gallery {
-      display: grid; grid-template-columns: repeat(4,1fr);
-      justify-content: center; gap: 15px;
-      width: min(900px,80%);
-      margin: 20px auto 40px auto;
-      align-items: flex-end;
-      background: #f4f8ec; padding: 30px;
-      border: 2px solid #4a7a2a; border-radius: 10px;
-    }
-    .result-card {
-      text-align: center; background: #eef5e0;
-      border: 1px solid #4a7a2a; border-radius: 10px; padding: 14px 10px;
-    }
-    .result-card .card-icon  { font-size:2.5em; display:block; margin-bottom:8px; }
-    .result-card .card-name  { font-family:'Press Start 2P',"Space Mono",monospace; font-size:0.42em; color:#2a4a1a; margin-bottom:6px; }
-    .result-card .card-owner { font-size:0.7em; color:#6a5a7a; margin-bottom:4px; }
-    .result-card .card-trait { font-size:0.72em; color:#4a6a3a; line-height:1.5; }
+/* ═══════════════════════════════════
+   QUIZ BODY
+═══════════════════════════════════ */
+#quiz-body{display:none;min-height:100vh;flex-direction:column;
+  background-color:#e8ede0;
+  background-image:radial-gradient(ellipse at 10% 90%,#c8d8a8 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 10%,#d0ddb8 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 50%,#dde8c8 0%,transparent 80%);
+  background-repeat:no-repeat;background-size:cover;
+}
+#quiz-body.active{display:flex;}
 
-    /* ==============================
-       Footer
-    ============================== */
-    footer {
-      text-align: center; padding: 10px 0 30px 0;
-      font-size: 0.8em; color: #4a6a3a;
-    }
+/* pixel corner borders on quiz */
+#quiz-border{position:fixed;inset:0;pointer-events:none;z-index:20;}
+.px-corner{position:absolute;width:40px;height:40px;image-rendering:pixelated;}
+.px-corner.tl{top:0;left:0}.px-corner.tr{top:0;right:0;transform:scaleX(-1)}
+.px-corner.bl{bottom:0;left:0;transform:scaleY(-1)}.px-corner.br{bottom:0;right:0;transform:scale(-1)}
 
-    /* ==============================
-       Fade-In
-    ============================== */
-    .fade-in { opacity:0; transition:opacity 0.3s ease-in-out; }
-    .fade-in.show { opacity:1; }
+/* quiz side deco columns */
+#quiz-deco-left,#quiz-deco-right{
+  position:fixed;top:0;bottom:0;width:70px;pointer-events:none;z-index:5;
+  display:flex;flex-direction:column;justify-content:flex-end;gap:4px;overflow:hidden;
+}
+#quiz-deco-left{left:0;}
+#quiz-deco-right{right:0;transform:scaleX(-1);}
 
-    /* ==============================
-       Media Queries
-    ============================== */
-    @media (max-width:1400px) { .result-gallery { grid-template-columns:repeat(2,1fr); max-width:70%; } }
-    @media (max-width:768px) {
-      #container { padding-top:50px; }
-      #text-box, #text-box.dialogue-scene { max-width:95%; width:95%; }
-      #text-box .creator-note { max-width:100%; width:100%; }
-      #image img { max-width:90vw; height:auto; }
-      .result-gallery { grid-template-columns:1fr; max-width:90%; }
-      .dual-sprite { gap:10px; }
-    }
-    /* ==============================
-       Theme Transitions
-    ============================== */
-    body {
-      transition:
-        background-color 0.7s ease,
-        background-image 0.7s ease;
-    }
+/* floating quiz ambient sprites */
+.quiz-ambient{position:fixed;pointer-events:none;z-index:4;image-rendering:pixelated;}
 
-    /* ── Skyonix theme (default — green/earthy) ── */
-    body.theme-skyonix {
-      background-color: #e8ede0;
-      background-image:
-        radial-gradient(ellipse at 10% 90%, #c8d8a8 0%, transparent 50%),
-        radial-gradient(ellipse at 90% 10%, #d0ddb8 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, #dde8c8 0%, transparent 80%);
-    }
+/* ── TEXT / BUTTONS ── */
+#text-box.title-font,.question-font{font-family:'Press Start 2P',"Space Mono",monospace;}
+#text-box.title-font{font-size:1.05em;line-height:1.9;}
+.question-font{font-size:0.82em;line-height:2.0;}
+#text-box{font-size:1.15em;margin:0 auto 30px;max-width:40%;position:relative;z-index:1;}
+#text-box.results-active{color:#1a2a10;}
+#overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(20,40,10,0.55);z-index:0;pointer-events:none;opacity:0;transition:opacity 0.3s ease;}
+#container{text-align:center;position:relative;z-index:1;padding-top:100px;flex:1 1 auto;}
+#container.results-active{padding-top:50px;transition:padding-top 0.3s ease;}
 
-    /* ── Pexxelina theme — soft twilight purple/lavender ── */
-    body.theme-pexxelina {
-      background-color: #ede0f0;
-      background-image:
-        radial-gradient(ellipse at 10% 90%, #d8b8e8 0%, transparent 50%),
-        radial-gradient(ellipse at 90% 10%, #e8c8f0 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, #f0d8f8 0%, transparent 80%);
-    }
+button{
+  background-color:#2a3a1a;color:#e8ede0;padding:10px 20px;
+  margin:0 auto 15px;font-size:1em;cursor:pointer;border:0;
+  clip-path:polygon(6px 0%,calc(100% - 6px) 0%,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0% calc(100% - 6px),0% 6px);
+  box-shadow:4px 4px 0 #0a1608;display:block;font-family:"Space Mono",monospace;
+  transition:background-color 0.1s steps(3),color 0.1s steps(3),transform 0.05s,box-shadow 0.05s;
+  width:clamp(200px,30%,500px);
+}
+button:hover{background-color:#c8d8a8;color:#1a2a10;box-shadow:4px 4px 0 #4a6a2a;}
+button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #0a1608;}
+.dialogue-btn{background-color:#2a3a1a;}
+.question-btn{background-color:#3a5020;}
+@media(min-width:1025px)and(max-width:1400px){button{width:clamp(200px,35%,450px);}}
+@media(min-width:769px)and(max-width:1024px){button{width:clamp(160px,40%,400px);}}
+@media(max-width:768px){button{width:70%;min-width:140px;max-width:300px;}}
 
-    /* buttons shift with theme */
-    body.theme-pexxelina button {
-      background-color: #5a2a7a;
-      border-color: #5a2a7a;
-      color: #f8eaff;
-    }
-    body.theme-pexxelina button:hover {
-      background-color: #e8c8f8;
-      color: #2a0a3a;
-    }
-    body.theme-pexxelina .dialogue-btn { background-color: #5a2a7a; }
-    body.theme-pexxelina .question-btn { background-color: #6a3a8a; }
+.dialogue-scene,#text-box.dialogue-scene{
+  background-color:#f4f8ec;padding:20px;
+  border:4px solid #4a7a2a;outline:2px solid #2a4418;outline-offset:2px;
+  box-shadow:4px 4px 0 #2a4418,8px 8px 0 rgba(42,68,24,0.28);
+  margin:0 auto 30px;max-width:40%;
+}
+.creator-note{background:#f4f8ec;border:4px solid #4a7a2a;outline:2px solid #2a4418;outline-offset:2px;
+  box-shadow:4px 4px 0 #2a4418;padding:15px;display:block;margin:0 auto 15px;max-width:600px;}
+.speaker-tag{display:inline-block;font-family:'Press Start 2P',"Space Mono",monospace;font-size:0.48em;
+  color:#fff;padding:3px 12px;margin-bottom:10px;
+  clip-path:polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);}
+.speaker-tag.skyonix{background:#3a7a2a;}.speaker-tag.pexxelina{background:#8a4a9a;}
 
-    /* text box dialogue border */
-    body.theme-pexxelina .dialogue-scene,
-    body.theme-pexxelina #text-box.dialogue-scene {
-      background-color: #faf0ff;
-      border-color: #9a5aaa;
-    }
-    body.theme-pexxelina .creator-note {
-      background: #faf0ff;
-      border-color: #9a5aaa;
-    }
+img{max-width:300px;margin-bottom:20px;}
+.result-icon-display{font-size:3em;display:block;margin:10px auto 20px;animation:floatbob 3s ease-in-out infinite;}
+@keyframes floatbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+#image img{width:100%;height:auto;max-width:inherit;max-height:100vh;}
+.dual-sprite{display:flex;justify-content:center;align-items:flex-end;gap:30px;margin-bottom:4px;}
+.sprite-wrap{display:flex;justify-content:center;animation:spritebob 2s ease-in-out infinite;}
+.sprite-wrap.delay{animation-delay:0.4s;}
+@keyframes spritebob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-    /* links */
-    body.theme-pexxelina a:link    { color: #7a3a9a; }
-    body.theme-pexxelina a:visited { color: #4a1a6a; }
+.result-gallery{display:grid;grid-template-columns:repeat(4,1fr);justify-content:center;gap:15px;
+  width:min(900px,80%);margin:20px auto 40px;align-items:flex-end;background:#f4f8ec;padding:30px;
+  border:4px solid #4a7a2a;outline:2px solid #2a4418;outline-offset:2px;box-shadow:6px 6px 0 #2a4418;}
+.result-card{text-align:center;background:#eef5e0;border:3px solid #4a7a2a;box-shadow:3px 3px 0 #2a4418;padding:14px 10px;}
+.result-card .card-icon{display:block;margin:0 auto 8px;}
+.result-card .card-name{font-family:'Press Start 2P',"Space Mono",monospace;font-size:0.42em;color:#2a4a1a;margin-bottom:6px;}
+.result-card .card-trait{font-size:0.72em;color:#4a6a3a;line-height:1.5;}
 
-    /* footer text */
-    body.theme-pexxelina footer { color: #7a4a8a; }
+footer{text-align:center;padding:10px 0 30px;font-size:0.8em;color:#4a6a3a;}
+.fade-in{opacity:0;transition:opacity 0.3s ease-in-out;}.fade-in.show{opacity:1;}
 
-    /* result gallery */
-    body.theme-pexxelina .result-gallery { background: #faf0ff; border-color: #9a5aaa; }
-    body.theme-pexxelina .result-card    { background: #f5e8ff; border-color: #9a5aaa; }
-    body.theme-pexxelina .result-card .card-name  { color: #3a0a5a; }
-    body.theme-pexxelina .result-card .card-trait { color: #6a4a7a; }
+@media(max-width:1400px){.result-gallery{grid-template-columns:repeat(2,1fr);max-width:70%;}}
+@media(max-width:768px){
+  #container{padding-top:50px;}
+  #text-box,#text-box.dialogue-scene{max-width:95%;width:95%;}
+  .result-gallery{grid-template-columns:1fr;max-width:90%;}
+  .dual-sprite{gap:10px;}
+}
 
-    /* speaker tag already has its own colour — keep it */
+/* THEME */
+body{transition:background-color 0.7s ease,background-image 0.7s ease;}
+body.theme-skyonix{background-color:#e8ede0;background-image:radial-gradient(ellipse at 10% 90%,#c8d8a8 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,#d0ddb8 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,#dde8c8 0%,transparent 80%);}
+body.theme-pexxelina{background-color:#ede0f0;background-image:radial-gradient(ellipse at 10% 90%,#d8b8e8 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,#e8c8f0 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,#f0d8f8 0%,transparent 80%);}
+body.theme-pexxelina button{background-color:#5a2a7a;color:#f8eaff;}
+body.theme-pexxelina button:hover{background-color:#e8c8f8;color:#2a0a3a;}
+body.theme-pexxelina .dialogue-btn{background-color:#5a2a7a;}
+body.theme-pexxelina .question-btn{background-color:#6a3a8a;}
+body.theme-pexxelina .dialogue-scene,body.theme-pexxelina #text-box.dialogue-scene{background-color:#faf0ff;border-color:#9a5aaa;}
+body.theme-pexxelina .creator-note{background:#faf0ff;border-color:#9a5aaa;}
+body.theme-pexxelina a:link{color:#7a3a9a;}body.theme-pexxelina a:visited{color:#4a1a6a;}
+body.theme-pexxelina footer{color:#7a4a8a;}
+body.theme-pexxelina .result-gallery{background:#faf0ff;border-color:#9a5aaa;}
+body.theme-pexxelina .result-card{background:#f5e8ff;border-color:#9a5aaa;}
+body.theme-pexxelina .result-card .card-name{color:#3a0a5a;}
+body.theme-pexxelina .result-card .card-trait{color:#6a4a7a;}
+button,.dialogue-scene,#text-box.dialogue-scene,.creator-note,footer,.result-gallery,.result-card{transition:background-color 0.6s ease,border-color 0.6s ease,color 0.6s ease;}
 
-    /* smooth transition on all the themed elements */
-    button, .dialogue-scene, #text-box.dialogue-scene,
-    .creator-note, footer, .result-gallery, .result-card {
-      transition:
-        background-color 0.6s ease,
-        border-color 0.6s ease,
-        color 0.6s ease;
-    }
-    #share-modal {
-      display: none;
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(10,20,5,0.82);
-      justify-content: center; align-items: center;
-      flex-direction: column; gap: 16px;
-    }
-    #share-modal.open { display: flex; }
-
-    #share-card {
-      background: linear-gradient(135deg, #1a2e0e 0%, #2a4a18 50%, #1a2e0e 100%);
-      border: 3px solid #6aaa3a;
-      border-radius: 16px;
-      width: 340px;
-      padding: 28px 24px 24px;
-      text-align: center;
-      position: relative;
-      box-shadow: 0 0 40px rgba(106,170,58,0.3), 0 8px 32px rgba(0,0,0,0.6);
-      animation: cardpop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-    @keyframes cardpop { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
-
-    /* animated shimmer strip */
-    #share-card::before {
-      content: '';
-      position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-      border-radius: 16px;
-      animation: shimmer 2.5s ease-in-out infinite;
-    }
-    @keyframes shimmer { 0%{left:-60%} 100%{left:120%} }
-
-    .sc-grove {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.5em; color: #6aaa3a;
-      letter-spacing: 2px; margin-bottom: 14px;
-      text-shadow: 0 0 8px rgba(106,170,58,0.5);
-    }
-    .sc-icon {
-      font-size: 4em; display: block;
-      margin-bottom: 10px;
-      animation: floatbob 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 10px rgba(106,170,58,0.4));
-    }
-    .sc-name {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.72em; color: #c8f090;
-      margin-bottom: 6px; line-height: 1.5;
-      text-shadow: 0 0 6px rgba(106,170,58,0.4);
-    }
-    .sc-subtitle {
-      font-size: 0.88em; color: #8ab870;
-      font-style: italic; margin-bottom: 12px; line-height: 1.5;
-    }
-    .sc-trait {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.38em; color: #5a9a3a;
-      letter-spacing: 1px; margin-bottom: 16px;
-    }
-    .sc-divider {
-      width: 60%; height: 1px;
-      background: linear-gradient(90deg, transparent, #4a7a2a, transparent);
-      margin: 10px auto 14px;
-    }
-    .sc-owner {
-      font-size: 0.75em; margin-bottom: 4px;
-    }
-    .sc-footer {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.32em; color: #3a6a2a;
-      letter-spacing: 1px;
-    }
-    /* floating pixel dots on card */
-    .sc-dots {
-      position: absolute; inset: 0; pointer-events: none;
-      border-radius: 16px; overflow: hidden;
-    }
-    .sc-dot {
-      position: absolute; border-radius: 0;
-      animation: dotfloat linear infinite;
-      opacity: 0.4;
-    }
-    @keyframes dotfloat {
-      0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
-      10%  { opacity: 0.5; }
-      90%  { opacity: 0.3; }
-      100% { transform: translateY(-320px) rotate(360deg); opacity: 0; }
-    }
-
-    .share-actions {
-      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
-    }
-    .share-btn {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.78em; padding: 9px 18px;
-      border-radius: 99px; border: 1px solid #4a7a2a;
-      cursor: pointer; transition: background 0.2s, color 0.2s;
-      width: auto; margin: 0;
-    }
-    .share-btn.primary   { background:#3a6a1a; color:#e8ede0; }
-    .share-btn.primary:hover { background:#4a8a2a; color:#fff; }
-    .share-btn.secondary { background:transparent; color:#6aaa3a; }
-    .share-btn.secondary:hover { background:rgba(106,170,58,0.12); }
-    .share-btn.close-btn { background:transparent; color:#7a9a6a; border-color:#3a5a2a; }
-    .share-btn.close-btn:hover { background:rgba(58,90,42,0.3); color:#c8e8a8; }
-
-    #copy-toast {
-      display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-      background: #2a4a1a; color: #c8f090; padding: 10px 22px;
-      border-radius: 99px; font-size: 0.82em; font-family: 'Space Mono',monospace;
-      z-index: 300; border: 1px solid #4a7a2a;
-      animation: toastpop 0.3s ease both;
-    }
-    @keyframes toastpop { from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-  </style>
+/* SHARE MODAL */
+#share-modal{display:none;position:fixed;inset:0;z-index:200;background:rgba(10,20,5,0.82);justify-content:center;align-items:center;flex-direction:column;gap:16px;}
+#share-modal.open{display:flex;}
+#share-card{background:linear-gradient(135deg,#1a2e0e,#2a4a18,#1a2e0e);border:4px solid #6aaa3a;outline:2px solid #3a6020;outline-offset:2px;width:340px;padding:28px 24px 24px;text-align:center;position:relative;box-shadow:8px 8px 0 #0a1608,0 0 40px rgba(106,170,58,0.3);animation:cardpop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes cardpop{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+#share-card::before{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);animation:shimmer 2.5s ease-in-out infinite;}
+@keyframes shimmer{0%{left:-60%}100%{left:120%}}
+.sc-grove{font-family:'Press Start 2P',monospace;font-size:0.5em;color:#6aaa3a;letter-spacing:2px;margin-bottom:14px;text-shadow:0 0 8px rgba(106,170,58,0.5);}
+.sc-icon{display:block;margin:0 auto 10px;animation:floatbob 3s ease-in-out infinite;}
+.sc-name{font-family:'Press Start 2P',monospace;font-size:0.72em;color:#c8f090;margin-bottom:6px;line-height:1.5;text-shadow:0 0 6px rgba(106,170,58,0.4);}
+.sc-subtitle{font-size:0.88em;color:#8ab870;font-style:italic;margin-bottom:12px;line-height:1.5;}
+.sc-trait{font-family:'Press Start 2P',monospace;font-size:0.38em;color:#5a9a3a;letter-spacing:1px;margin-bottom:16px;}
+.sc-divider{width:60%;height:2px;background:linear-gradient(90deg,transparent,#4a7a2a,transparent);margin:10px auto 14px;}
+.sc-owner{font-size:0.75em;margin-bottom:4px;}.sc-footer{font-family:'Press Start 2P',monospace;font-size:0.32em;color:#3a6a2a;letter-spacing:1px;}
+.sc-dots{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.sc-dot{position:absolute;animation:dotfloat linear infinite;}
+@keyframes dotfloat{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:0.5}90%{opacity:0.3}100%{transform:translateY(-320px) rotate(360deg);opacity:0}}
+.share-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.share-btn{font-family:'Space Mono',monospace;font-size:0.78em;padding:9px 18px;clip-path:polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);border:0;cursor:pointer;transition:background 0.1s,color 0.1s;width:auto;margin:0;}
+.share-btn.primary{background:#3a6a1a;color:#e8ede0;box-shadow:3px 3px 0 #0a1608;}
+.share-btn.primary:hover{background:#4a8a2a;}
+.share-btn.secondary{background:rgba(106,170,58,0.15);color:#6aaa3a;border:2px solid #3a6020;box-shadow:3px 3px 0 #0a1608;}
+.share-btn.close-btn{background:rgba(58,90,42,0.3);color:#7a9a6a;border:2px solid #3a5a2a;box-shadow:3px 3px 0 #0a1608;}
+.share-btn.close-btn:hover{color:#c8e8a8;}
+#copy-toast{display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#2a4a1a;color:#c8f090;padding:10px 22px;clip-path:polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);font-size:0.82em;font-family:'Space Mono',monospace;z-index:300;border:2px solid #4a7a2a;box-shadow:4px 4px 0 #0a1608;animation:toastpop 0.3s steps(4) both;}
+@keyframes toastpop{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+</style>
 </head>
-<body class="theme-skyonix">
+<body>
+<canvas id="pixel-canvas"></canvas>
 
-<div id="overlay"></div>
-<div id="container">
-  <div id="image"></div>
-  <div id="text-box"></div>
-  <div id="buttons"></div>
+<!-- ═══════ INTRO ═══════ -->
+<div id="intro-screen">
+  <div id="intro-sky"></div>
+  <div id="px-moon"></div>
+  <div id="deco-left"></div>
+  <div id="deco-right"></div>
+  <div id="intro-trees-left"  style="position:absolute;bottom:90px;left:0;display:flex;gap:0;align-items:flex-end;pointer-events:none;z-index:3;"></div>
+  <div id="intro-trees-right" style="position:absolute;bottom:90px;right:0;display:flex;gap:0;align-items:flex-end;pointer-events:none;z-index:3;transform:scaleX(-1)"></div>
+  <div id="px-ground"></div>
+
+  <div id="intro-logo">
+    <div class="intro-eyebrow">✦ &nbsp; AN INTELLECTUAL JOURNEY &nbsp; ✦</div>
+    <div class="intro-title">The Grove</div>
+    <div class="intro-title-under"></div>
+    <div class="intro-sub">Twelve paths. One mind. Which belongs to you?</div>
+    <div id="intro-sprites">
+      <div class="sprite-wrap" id="intro-sky-sprite"></div>
+      <div class="sprite-wrap delay" id="intro-pex-sprite"></div>
+    </div>
+    <div class="intro-icons" id="intro-icons"></div>
+    <button id="enter-btn" onclick="enterGrove()">&#9658;&nbsp; Enter the Grove &nbsp;<span class="btn-cursor">_</span></button>
+  </div>
 </div>
-<footer>Made by <a href="https://github.com/SkyonixTheKing23" target="_blank">Skyonix</a> &amp; <a href="https://github.com/pxxelina" target="_blank">Pexxelina</a> &nbsp;·&nbsp; © 2026 Skyonix &amp; Pexxelina</footer>
+<div id="curtain"></div>
+
+<!-- ═══════ QUIZ ═══════ -->
+<div id="quiz-body">
+  <div id="quiz-border">
+    <svg class="px-corner tl" viewBox="0 0 40 40"><rect x="0" y="0" width="10" height="40" fill="#4a7a2a" opacity="0.45"/><rect x="0" y="0" width="40" height="10" fill="#4a7a2a" opacity="0.45"/><rect x="10" y="10" width="6" height="6" fill="#6aaa3a" opacity="0.7"/><rect x="16" y="16" width="4" height="4" fill="#4a7a2a" opacity="0.4"/></svg>
+    <svg class="px-corner tr" viewBox="0 0 40 40"><rect x="0" y="0" width="10" height="40" fill="#4a7a2a" opacity="0.45"/><rect x="0" y="0" width="40" height="10" fill="#4a7a2a" opacity="0.45"/><rect x="10" y="10" width="6" height="6" fill="#6aaa3a" opacity="0.7"/><rect x="16" y="16" width="4" height="4" fill="#4a7a2a" opacity="0.4"/></svg>
+    <svg class="px-corner bl" viewBox="0 0 40 40"><rect x="0" y="0" width="10" height="40" fill="#4a7a2a" opacity="0.45"/><rect x="0" y="0" width="40" height="10" fill="#4a7a2a" opacity="0.45"/><rect x="10" y="10" width="6" height="6" fill="#6aaa3a" opacity="0.7"/><rect x="16" y="16" width="4" height="4" fill="#4a7a2a" opacity="0.4"/></svg>
+    <svg class="px-corner br" viewBox="0 0 40 40"><rect x="0" y="0" width="10" height="40" fill="#4a7a2a" opacity="0.45"/><rect x="0" y="0" width="40" height="10" fill="#4a7a2a" opacity="0.45"/><rect x="10" y="10" width="6" height="6" fill="#6aaa3a" opacity="0.7"/><rect x="16" y="16" width="4" height="4" fill="#4a7a2a" opacity="0.4"/></svg>
+  </div>
+  <div id="quiz-deco-left"></div>
+  <div id="quiz-deco-right"></div>
+  <div id="overlay"></div>
+  <div id="container">
+    <div id="image"></div>
+    <div id="text-box"></div>
+    <div id="buttons"></div>
+  </div>
+  <footer>Made by <a href="https://github.com/SkyonixTheKing23" target="_blank">Skyonix</a> &amp; <a href="https://github.com/pxxelina" target="_blank">Pexxelina</a> &nbsp;&#183;&nbsp; &#169; 2026</footer>
+</div>
 
 <!-- Share Modal -->
 <div id="share-modal">
   <div id="share-card">
     <div class="sc-dots" id="sc-dots"></div>
-    <div class="sc-grove">✦ THE GROVE ✦</div>
-    <span class="sc-icon" id="sc-icon">✨</span>
+    <div class="sc-grove">&#10022; THE GROVE &#10022;</div>
+    <div class="sc-icon" id="sc-icon"></div>
     <div class="sc-name" id="sc-name">The Creator</div>
     <div class="sc-subtitle" id="sc-subtitle">World-Builder</div>
     <div class="sc-divider"></div>
-    <div class="sc-trait" id="sc-trait">Imaginative · Free · Original</div>
-    <div class="sc-owner" id="sc-owner">✦ Revealed by Pexxelina</div>
+    <div class="sc-trait" id="sc-trait">Imaginative &#183; Free &#183; Original</div>
+    <div class="sc-owner" id="sc-owner">&#10022; Revealed by Pexxelina</div>
     <div class="sc-footer">thegrove.skyonix.dev</div>
   </div>
   <div class="share-actions">
-    <button class="share-btn primary" id="copy-link-btn">🔗 Copy Link</button>
-    <button class="share-btn secondary" id="copy-text-btn">📋 Copy Result Text</button>
-    <button class="share-btn close-btn" id="close-share-btn">✕ Close</button>
+    <button class="share-btn primary" id="copy-link-btn">Link Copy</button>
+    <button class="share-btn secondary" id="copy-text-btn">Copy Result</button>
+    <button class="share-btn close-btn" id="close-share-btn">X Close</button>
   </div>
 </div>
-<div id="copy-toast">✓ Copied!</div>
+<div id="copy-toast">&#10003; Copied!</div>
 
 <script>
-/* ============================================================
-   WEB AUDIO SOUND ENGINE — no external files needed
-============================================================ */
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let ctx = null;
+/* ════════════════════════════════════════════
+   ALL PIXEL SVG SPRITES — no emojis anywhere
+════════════════════════════════════════════ */
+const PX = {
 
-function getCtx() {
-  if (!ctx) ctx = new AudioCtx();
-  return ctx;
-}
+  // ── CHARACTER SPRITES ──
+  skyonix(frame){
+    const orbO=frame?"0.9":"0.5",orbR=frame?7:5,aLift=frame?-4:0,inner=Math.max(2,orbR-3);
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 90" width="145" height="190" style="image-rendering:pixelated;display:block">
+    <ellipse cx="32" cy="84" rx="15" ry="3" fill="#4a7a2a" opacity="0.35"/>
+    <rect x="18" y="40" width="28" height="44" fill="#3a5a20"/>
+    <rect x="14" y="46" width="6" height="32" fill="#2a4418"/>
+    <rect x="44" y="46" width="6" height="32" fill="#2a4418"/>
+    <rect x="18" y="78" width="5" height="4" fill="#4a7a2a"/>
+    <rect x="27" y="80" width="5" height="4" fill="#4a7a2a"/>
+    <rect x="36" y="78" width="5" height="4" fill="#4a7a2a"/>
+    <rect x="43" y="80" width="3" height="4" fill="#4a7a2a"/>
+    <rect x="18" y="55" width="28" height="4" fill="#6aaa3a"/>
+    <rect x="21" y="54" width="4" height="6" fill="#5a8a2a"/>
+    <rect x="30" y="53" width="4" height="7" fill="#7ac040"/>
+    <rect x="40" y="54" width="4" height="6" fill="#5a8a2a"/>
+    <rect x="28" y="34" width="8" height="8" fill="#b8c890"/>
+    <rect x="20" y="15" width="24" height="21" fill="#b8c890"/>
+    <rect x="14" y="11" width="36" height="7" fill="#2a4a18"/>
+    <rect x="18" y="5" width="7" height="8" fill="#4a8a28"/>
+    <rect x="28" y="3" width="8" height="10" fill="#5aaa30"/>
+    <rect x="39" y="5" width="7" height="8" fill="#4a8a28"/>
+    <rect x="15" y="13" width="4" height="4" fill="#4a7a2a"/>
+    <rect x="45" y="13" width="4" height="4" fill="#4a7a2a"/>
+    <rect x="30" y="4" width="4" height="5" fill="#8fbc3f" opacity="${orbO}"/>
+    <rect x="24" y="22" width="4" height="5" fill="#5aaa30"/>
+    <rect x="36" y="22" width="4" height="5" fill="#5aaa30"/>
+    <rect x="24" y="22" width="2" height="2" fill="#d0ffb0"/>
+    <rect x="36" y="22" width="2" height="2" fill="#d0ffb0"/>
+    <rect x="30" y="29" width="4" height="2" fill="#4a6a2a" opacity="0.5"/>
+    <rect x="7" y="${40+aLift}" width="11" height="22" fill="#3a5a20"/>
+    <rect x="4" y="${58+aLift}" width="10" height="8" fill="#b8c890"/>
+    <circle cx="9" cy="${54+aLift}" r="${orbR}" fill="#7ec850" opacity="${orbO}"/>
+    <circle cx="9" cy="${54+aLift}" r="${inner}" fill="#d0ffb0"/>
+    <rect x="46" y="44" width="11" height="20" fill="#3a5a20"/>
+    <rect x="50" y="58" width="10" height="8" fill="#b8c890"/>
+    </svg>`;
+  },
 
-function playTone(freq, type, duration, gain, fadeOut) {
-  try {
-    const ac  = getCtx();
-    const osc = ac.createOscillator();
-    const gn  = ac.createGain();
-    osc.connect(gn); gn.connect(ac.destination);
-    osc.type = type || 'square';
-    osc.frequency.setValueAtTime(freq, ac.currentTime);
-    gn.gain.setValueAtTime(gain || 0.12, ac.currentTime);
-    if (fadeOut) gn.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + duration);
-    osc.start(ac.currentTime);
-    osc.stop(ac.currentTime + duration);
-  } catch(e) {}
-}
+  pexxelina(frame){
+    const orbO=frame?"0.9":"0.5",orbR=frame?7:5,aLift=frame?-4:0,inner=Math.max(2,orbR-3);
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 90" width="145" height="190" style="image-rendering:pixelated;display:block">
+    <ellipse cx="32" cy="84" rx="15" ry="3" fill="#9a4aaa" opacity="0.3"/>
+    <rect x="17" y="40" width="30" height="44" fill="#7a2a9a"/>
+    <rect x="13" y="46" width="6" height="32" fill="#5a1a7a"/>
+    <rect x="45" y="46" width="6" height="32" fill="#5a1a7a"/>
+    <rect x="14" y="76" width="36" height="6" fill="#8a3aaa"/>
+    <rect x="11" y="80" width="42" height="4" fill="#7a2a9a"/>
+    <rect x="17" y="55" width="30" height="4" fill="#c060d0"/>
+    <rect x="20" y="53" width="4" height="7" fill="#e080e0"/>
+    <rect x="30" y="52" width="4" height="8" fill="#f090f0"/>
+    <rect x="41" y="53" width="4" height="7" fill="#e080e0"/>
+    <rect x="31" y="53" width="2" height="2" fill="#fff0ff"/>
+    <rect x="28" y="34" width="8" height="8" fill="#e8c8b0"/>
+    <rect x="20" y="14" width="24" height="22" fill="#e8c8b0"/>
+    <rect x="18" y="10" width="28" height="8" fill="#3a1a5a"/>
+    <rect x="14" y="14" width="8" height="18" fill="#3a1a5a"/>
+    <rect x="42" y="14" width="8" height="18" fill="#3a1a5a"/>
+    <rect x="14" y="30" width="6" height="14" fill="#3a1a5a"/>
+    <rect x="44" y="30" width="6" height="14" fill="#3a1a5a"/>
+    <rect x="38" y="8" width="6" height="6" fill="#f080c0"/>
+    <rect x="40" y="6" width="2" height="2" fill="#fff0ff"/>
+    <rect x="24" y="22" width="4" height="5" fill="#c060d0"/>
+    <rect x="36" y="22" width="4" height="5" fill="#c060d0"/>
+    <rect x="24" y="22" width="2" height="2" fill="#ffd0ff"/>
+    <rect x="36" y="22" width="2" height="2" fill="#ffd0ff"/>
+    <rect x="27" y="29" width="2" height="2" fill="#b07080" opacity="0.8"/>
+    <rect x="29" y="31" width="6" height="2" fill="#b07080" opacity="0.9"/>
+    <rect x="35" y="29" width="2" height="2" fill="#b07080" opacity="0.8"/>
+    <rect x="7" y="${40+aLift}" width="10" height="22" fill="#7a2a9a"/>
+    <rect x="4" y="${58+aLift}" width="10" height="8" fill="#e8c8b0"/>
+    <circle cx="9" cy="${54+aLift}" r="${orbR}" fill="#d060e0" opacity="${orbO}"/>
+    <circle cx="9" cy="${54+aLift}" r="${inner}" fill="#ffd0ff"/>
+    <rect x="47" y="44" width="10" height="20" fill="#7a2a9a"/>
+    <rect x="50" y="58" width="10" height="8" fill="#e8c8b0"/>
+    </svg>`;
+  },
 
-function playChord(freqs, type, duration, gain) {
-  freqs.forEach(f => playTone(f, type, duration, (gain||0.08)/freqs.length, true));
-}
+  // ── DECORATIVE SPRITES ──
 
-// Individual sound effects
-const sounds = {
-  // Short pixel blip for dialogue advance
-  blip: () => {
-    playTone(880, 'square', 0.06, 0.1, true);
-    setTimeout(() => playTone(1100, 'square', 0.05, 0.08, true), 40);
+  mushroom(cap='#d050d0', spot='#ffffff', w=36, h=44){
+    const sc = w/36;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 44" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="14" y="26" width="8"  height="14" fill="#e8dcc0"/>
+    <rect x="12" y="30" width="2"  height="6"  fill="#d8cca8" opacity="0.8"/>
+    <rect x="22" y="30" width="2"  height="6"  fill="#d8cca8" opacity="0.8"/>
+    <rect x="11" y="10" width="14" height="18" fill="${cap}"/>
+    <rect x="5"  y="14" width="6"  height="10" fill="${cap}"/>
+    <rect x="25" y="14" width="6"  height="10" fill="${cap}"/>
+    <rect x="9"  y="4"  width="18" height="10" fill="${cap}"/>
+    <rect x="14" y="0"  width="8"  height="6"  fill="${cap}"/>
+    <rect x="8"  y="12" width="5"  height="5"  fill="${spot}" opacity="0.9"/>
+    <rect x="18" y="15" width="4"  height="4"  fill="${spot}" opacity="0.9"/>
+    <rect x="14" y="20" width="3"  height="3"  fill="${spot}" opacity="0.8"/>
+    <rect x="6"  y="18" width="3"  height="3"  fill="${spot}" opacity="0.7"/>
+    <rect x="24" y="10" width="3"  height="3"  fill="${spot}" opacity="0.7"/>
+    </svg>`;
   },
-  // Slightly different blip for question option select
-  select: () => {
-    playTone(660, 'square', 0.05, 0.1, true);
-    setTimeout(() => playTone(990, 'square', 0.07, 0.09, true), 30);
+
+  flower(petal='#f070d0', center='#f0e060', w=30, h=38){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 38" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="13" y="16" width="4" height="22" fill="#3a7a20"/>
+    <rect x="7"  y="24" width="7" height="4"  fill="#3a7a20"/>
+    <rect x="13" y="4"  width="4" height="6"  fill="${petal}"/>
+    <rect x="5"  y="8"  width="6" height="6"  fill="${petal}"/>
+    <rect x="19" y="8"  width="6" height="6"  fill="${petal}"/>
+    <rect x="7"  y="14" width="6" height="6"  fill="${petal}"/>
+    <rect x="17" y="14" width="6" height="6"  fill="${petal}"/>
+    <rect x="11" y="8"  width="8" height="10" fill="${center}"/>
+    <rect x="12" y="9"  width="3" height="3"  fill="#ffffff" opacity="0.7"/>
+    </svg>`;
   },
-  // Gentle chime for scene transitions (between question sets)
-  chime: () => {
-    playTone(523, 'sine', 0.18, 0.1, true);
-    setTimeout(() => playTone(659, 'sine', 0.18, 0.09, true), 80);
-    setTimeout(() => playTone(784, 'sine', 0.22, 0.08, true), 160);
+
+  crystal(col1='#90a0f0', col2='#c0d0ff', w=22, h=40){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 40" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="8"  y="0"  width="6"  height="6"  fill="${col2}"/>
+    <rect x="6"  y="6"  width="10" height="10" fill="${col1}"/>
+    <rect x="4"  y="14" width="14" height="14" fill="${col1}"/>
+    <rect x="6"  y="28" width="10" height="8"  fill="${col2}" opacity="0.85"/>
+    <rect x="8"  y="34" width="6"  height="6"  fill="${col2}" opacity="0.6"/>
+    <rect x="7"  y="8"  width="3"  height="6"  fill="#ffffff" opacity="0.45"/>
+    <rect x="5"  y="16" width="3"  height="4"  fill="#ffffff" opacity="0.3"/>
+    <rect x="14" y="20" width="2"  height="4"  fill="#ffffff" opacity="0.2"/>
+    </svg>`;
   },
-  // Fanfare arpeggio for result reveal
-  fanfare: () => {
-    const notes = [523, 659, 784, 1047];
-    notes.forEach((f, i) => setTimeout(() => playTone(f, 'sine', 0.25, 0.1, true), i * 90));
-    setTimeout(() => playChord([523,659,784], 'sine', 0.5, 0.18), 420);
+
+  butterfly(w1='#c060d0', w2='#60c080', w=42, h=30){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 30" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="18" y="8"  width="6" height="16" fill="#1a0e08"/>
+    <rect x="4"  y="4"  width="16" height="12" fill="${w1}"/>
+    <rect x="2"  y="10" width="12" height="10" fill="${w1}" opacity="0.75"/>
+    <rect x="22" y="4"  width="16" height="12" fill="${w2}"/>
+    <rect x="28" y="10" width="12" height="10" fill="${w2}" opacity="0.75"/>
+    <rect x="6"  y="6"  width="6"  height="4"  fill="#ffffff" opacity="0.38"/>
+    <rect x="30" y="6"  width="6"  height="4"  fill="#ffffff" opacity="0.38"/>
+    <rect x="14" y="6"  width="4"  height="3"  fill="#ffffff" opacity="0.25"/>
+    <rect x="24" y="6"  width="4"  height="3"  fill="#ffffff" opacity="0.25"/>
+    <rect x="16" y="6"  width="4"  height="3"  fill="#1a0e08"/>
+    <rect x="22" y="6"  width="4"  height="3"  fill="#1a0e08"/>
+    </svg>`;
   },
-  // Woosh for character intro
-  whoosh: () => {
-    try {
-      const ac = getCtx();
-      const buf = ac.createBuffer(1, ac.sampleRate * 0.25, ac.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
-      const src = ac.createBufferSource();
-      src.buffer = buf;
-      const flt = ac.createBiquadFilter();
-      flt.type = 'bandpass'; flt.frequency.value = 1200; flt.Q.value = 0.5;
-      const gn = ac.createGain();
-      gn.gain.setValueAtTime(0.18, ac.currentTime);
-      gn.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
-      src.connect(flt); flt.connect(gn); gn.connect(ac.destination);
-      src.start(); src.stop(ac.currentTime + 0.25);
-    } catch(e) {}
+
+  snail(w=40, h=28){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 28" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="4"  y="16" width="28" height="10" fill="#80b840"/>
+    <rect x="0"  y="18" width="6"  height="8"  fill="#80b840"/>
+    <rect x="28" y="14" width="10" height="12" fill="#c08030"/>
+    <rect x="30" y="10" width="8"  height="6"  fill="#c08030"/>
+    <rect x="32" y="4"  width="6"  height="8"  fill="#a06020"/>
+    <rect x="34" y="2"  width="4"  height="4"  fill="#c08030"/>
+    <rect x="32" y="14" width="4"  height="4"  fill="#d09040" opacity="0.7"/>
+    <rect x="36" y="10" width="2"  height="2"  fill="#e0b060" opacity="0.8"/>
+    <rect x="6"  y="14" width="2"  height="4"  fill="#60a030"/>
+    <rect x="10" y="14" width="2"  height="4"  fill="#60a030"/>
+    <rect x="8"  y="12" width="2"  height="2"  fill="#80c040"/>
+    <rect x="4"  y="16" width="2"  height="2"  fill="#a0d060" opacity="0.6"/>
+    </svg>`;
   },
+
+  frog(w=36, h=30){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 30" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="4"  y="12" width="28" height="16" fill="#50a830"/>
+    <rect x="0"  y="18" width="8"  height="10" fill="#3a8a20"/>
+    <rect x="28" y="18" width="8"  height="10" fill="#3a8a20"/>
+    <rect x="2"  y="20" width="8"  height="6"  fill="#50a830"/>
+    <rect x="26" y="20" width="8"  height="6"  fill="#50a830"/>
+    <rect x="8"  y="8"  width="20" height="8"  fill="#50a830"/>
+    <rect x="4"  y="6"  width="8"  height="8"  fill="#50a830"/>
+    <rect x="24" y="6"  width="8"  height="8"  fill="#50a830"/>
+    <rect x="6"  y="4"  width="8"  height="6"  fill="#60c038"/>
+    <rect x="22" y="4"  width="8"  height="6"  fill="#60c038"/>
+    <rect x="7"  y="5"  width="5"  height="4"  fill="#f0f0a0"/>
+    <rect x="24" y="5"  width="5"  height="4"  fill="#f0f0a0"/>
+    <rect x="8"  y="6"  width="3"  height="2"  fill="#202020"/>
+    <rect x="25" y="6"  width="3"  height="2"  fill="#202020"/>
+    <rect x="14" y="14" width="8"  height="2"  fill="#a0d870" opacity="0.7"/>
+    <rect x="12" y="18" width="12" height="4"  fill="#70d040" opacity="0.5"/>
+    </svg>`;
+  },
+
+  owl(w=32, h=40){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="6"  y="4"  width="20" height="28" fill="#5a3a18"/>
+    <rect x="2"  y="8"  width="6"  height="16" fill="#5a3a18"/>
+    <rect x="24" y="8"  width="6"  height="16" fill="#5a3a18"/>
+    <rect x="6"  y="28" width="20" height="8"  fill="#4a2a10"/>
+    <rect x="8"  y="32" width="6"  height="8"  fill="#3a2008"/>
+    <rect x="18" y="32" width="6"  height="8"  fill="#3a2008"/>
+    <rect x="6"  y="4"  width="8"  height="6"  fill="#7a5a28"/>
+    <rect x="18" y="4"  width="8"  height="6"  fill="#7a5a28"/>
+    <rect x="2"  y="4"  width="4"  height="5"  fill="#7a5a28"/>
+    <rect x="26" y="4"  width="4"  height="5"  fill="#7a5a28"/>
+    <rect x="7"  y="8"  width="8"  height="8"  fill="#f0e0a0"/>
+    <rect x="17" y="8"  width="8"  height="8"  fill="#f0e0a0"/>
+    <rect x="9"  y="10" width="4"  height="4"  fill="#1a1040"/>
+    <rect x="19" y="10" width="4"  height="4"  fill="#1a1040"/>
+    <rect x="10" y="11" width="2"  height="2"  fill="#ffffff" opacity="0.7"/>
+    <rect x="20" y="11" width="2"  height="2"  fill="#ffffff" opacity="0.7"/>
+    <rect x="14" y="14" width="4"  height="4"  fill="#c07828"/>
+    <rect x="10" y="22" width="12" height="4"  fill="#6a4420" opacity="0.6"/>
+    </svg>`;
+  },
+
+  leaf(col='#4a8a28', w=24, h=28){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 28" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="10" y="22" width="4" height="6"  fill="#3a6a20"/>
+    <rect x="8"  y="6"  width="8" height="18" fill="${col}"/>
+    <rect x="4"  y="10" width="6" height="10" fill="${col}"/>
+    <rect x="14" y="10" width="6" height="10" fill="${col}"/>
+    <rect x="6"  y="6"  width="4" height="6"  fill="${col}"/>
+    <rect x="14" y="6"  width="4" height="6"  fill="${col}"/>
+    <rect x="10" y="2"  width="4" height="6"  fill="${col}"/>
+    <rect x="9"  y="8"  width="2" height="12" fill="#5aaa30" opacity="0.5"/>
+    <rect x="12" y="10" width="2" height="8"  fill="#5aaa30" opacity="0.4"/>
+    </svg>`;
+  },
+
+  berry(col='#d030a0', w=18, h=22){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 22" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="7"  y="0"  width="4" height="6"  fill="#3a7020"/>
+    <rect x="5"  y="6"  width="8" height="10" fill="${col}"/>
+    <rect x="3"  y="8"  width="4" height="6"  fill="${col}"/>
+    <rect x="11" y="8"  width="4" height="6"  fill="${col}"/>
+    <rect x="5"  y="14" width="8" height="6"  fill="${col}" opacity="0.8"/>
+    <rect x="6"  y="8"  width="3" height="3"  fill="#ffffff" opacity="0.4"/>
+    </svg>`;
+  },
+
+  smallStar(col='#d080f0', w=18, h=18){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="6"  y="0"  width="6" height="18" fill="${col}" opacity="0.9"/>
+    <rect x="0"  y="6"  width="18" height="6" fill="${col}" opacity="0.9"/>
+    <rect x="3"  y="3"  width="3" height="3"  fill="${col}"/>
+    <rect x="12" y="3"  width="3" height="3"  fill="${col}"/>
+    <rect x="3"  y="12" width="3" height="3"  fill="${col}"/>
+    <rect x="12" y="12" width="3" height="3"  fill="${col}"/>
+    <rect x="7"  y="7"  width="4" height="4"  fill="#ffffff" opacity="0.5"/>
+    </svg>`;
+  },
+
+  heart(col='#f04060', w=20, h=18){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="2"  y="4"  width="6" height="6"  fill="${col}"/>
+    <rect x="12" y="4"  width="6" height="6"  fill="${col}"/>
+    <rect x="0"  y="6"  width="4" height="6"  fill="${col}"/>
+    <rect x="16" y="6"  width="4" height="6"  fill="${col}"/>
+    <rect x="4"  y="2"  width="6" height="4"  fill="${col}"/>
+    <rect x="10" y="2"  width="6" height="4"  fill="${col}"/>
+    <rect x="2"  y="10" width="16" height="4" fill="${col}"/>
+    <rect x="4"  y="14" width="12" height="4" fill="${col}"/>
+    <rect x="6"  y="16" width="8"  height="2" fill="${col}"/>
+    <rect x="8"  y="18" width="4"  height="2" fill="${col}"/>
+    <rect x="4"  y="4"  width="3"  height="3" fill="#ffffff" opacity="0.45"/>
+    </svg>`;
+  },
+
+  lantern(col='#f0c030', w=24, h=36){
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="${w}" height="${h}" style="image-rendering:pixelated;display:block">
+    <rect x="10" y="0"  width="4" height="6"  fill="#808080"/>
+    <rect x="6"  y="6"  width="12" height="4" fill="#a0a0a0"/>
+    <rect x="4"  y="10" width="16" height="18" fill="${col}"/>
+    <rect x="2"  y="12" width="4"  height="14" fill="${col}" opacity="0.7"/>
+    <rect x="18" y="12" width="4"  height="14" fill="${col}" opacity="0.7"/>
+    <rect x="6"  y="28" width="12" height="4"  fill="#a0a0a0"/>
+    <rect x="8"  y="32" width="8"  height="4"  fill="#808080"/>
+    <rect x="6"  y="12" width="2"  height="14" fill="#ffffff" opacity="0.3"/>
+    <rect x="10" y="10" width="4"  height="2"  fill="#ffffff" opacity="0.4"/>
+    </svg>`;
+  },
+
+  // PIXEL ICONS for result types (replaces emojis in result cards & share card)
+  icon_laptop: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 30" width="40" height="30" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="4" y="2" width="32" height="20" fill="#3a3a4a"/><rect x="6" y="4" width="28" height="16" fill="#50d0f0"/><rect x="8" y="6" width="24" height="12" fill="#30a0d0"/>
+    <rect x="12" y="8" width="8" height="2" fill="#80e8ff" opacity="0.7"/><rect x="12" y="12" width="14" height="2" fill="#80e8ff" opacity="0.5"/><rect x="12" y="10" width="5" height="2" fill="#ffffff" opacity="0.4"/>
+    <rect x="0" y="22" width="40" height="6" fill="#2a2a3a"/><rect x="14" y="22" width="12" height="3" fill="#3a3a4a"/>
+    </svg>`,
+
+  icon_infinity: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 24" width="44" height="24" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="4"  y="8"  width="8" height="8" fill="#70b0f0"/><rect x="2"  y="10" width="4" height="4" fill="#70b0f0"/>
+    <rect x="10" y="4"  width="8" height="4" fill="#70b0f0"/><rect x="10" y="16" width="8" height="4" fill="#70b0f0"/>
+    <rect x="18" y="8"  width="8" height="8" fill="#90c8ff"/>
+    <rect x="26" y="4"  width="8" height="4" fill="#70b0f0"/><rect x="26" y="16" width="8" height="4" fill="#70b0f0"/>
+    <rect x="32" y="8"  width="8" height="8" fill="#70b0f0"/><rect x="38" y="10" width="4" height="4" fill="#70b0f0"/>
+    <rect x="20" y="10" width="4" height="4" fill="#ffffff" opacity="0.5"/>
+    </svg>`,
+
+  icon_atom: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="18" y="0"  width="4" height="40" fill="#60b0f0" opacity="0.6"/>
+    <rect x="0"  y="18" width="40" height="4" fill="#60b0f0" opacity="0.6"/>
+    <rect x="4"  y="4"  width="4" height="4"  fill="#60b0f0" opacity="0.5"/>
+    <rect x="32" y="4"  width="4" height="4"  fill="#60b0f0" opacity="0.5"/>
+    <rect x="4"  y="32" width="4" height="4"  fill="#60b0f0" opacity="0.5"/>
+    <rect x="32" y="32" width="4" height="4"  fill="#60b0f0" opacity="0.5"/>
+    <rect x="14" y="14" width="12" height="12" fill="#a0d8ff"/>
+    <rect x="17" y="17" width="6"  height="6"  fill="#ffffff"/>
+    <rect x="18" y="18" width="4"  height="4"  fill="#2060c0"/>
+    </svg>`,
+
+  icon_microscope: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" width="32" height="40" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="4"  y="32" width="24" height="6" fill="#808090"/><rect x="6"  y="34" width="20" height="2" fill="#a0a0b0"/>
+    <rect x="10" y="14" width="12" height="20" fill="#9090a0"/>
+    <rect x="12" y="10" width="8"  height="6"  fill="#7070a0"/>
+    <rect x="13" y="4"  width="6"  height="8"  fill="#5050a0"/>
+    <rect x="14" y="2"  width="4"  height="4"  fill="#c0c0e0"/>
+    <rect x="8"  y="14" width="4"  height="12" fill="#7090c0"/>
+    <rect x="14" y="6"  width="2"  height="2"  fill="#ffffff" opacity="0.6"/>
+    <rect x="10" y="30" width="4"  height="4"  fill="#606090"/>
+    <rect x="18" y="30" width="4"  height="4"  fill="#606090"/>
+    </svg>`,
+
+  icon_owl_big: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 50" width="40" height="50" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="8"  y="6"  width="24" height="34" fill="#6a4420"/><rect x="4"  y="10" width="8"  height="20" fill="#6a4420"/>
+    <rect x="28" y="10" width="8"  height="20" fill="#6a4420"/>
+    <rect x="8"  y="36" width="24" height="10" fill="#5a3410"/>
+    <rect x="10" y="40" width="8"  height="10" fill="#4a2808"/><rect x="22" y="40" width="8"  height="10" fill="#4a2808"/>
+    <rect x="8"  y="6"  width="10" height="8"  fill="#8a6030"/><rect x="22" y="6"  width="10" height="8"  fill="#8a6030"/>
+    <rect x="2"  y="6"  width="6"  height="7"  fill="#8a6030"/><rect x="32" y="6"  width="6"  height="7"  fill="#8a6030"/>
+    <rect x="9"  y="10" width="10" height="10" fill="#f8f0c0"/><rect x="21" y="10" width="10" height="10" fill="#f8f0c0"/>
+    <rect x="11" y="12" width="6"  height="6"  fill="#1a0a50"/><rect x="23" y="12" width="6"  height="6"  fill="#1a0a50"/>
+    <rect x="12" y="13" width="3"  height="3"  fill="#ffffff" opacity="0.8"/><rect x="24" y="13" width="3"  height="3"  fill="#ffffff" opacity="0.8"/>
+    <rect x="17" y="17" width="6"  height="6"  fill="#d08828"/><rect x="14" y="28" width="12" height="6"  fill="#7a5020" opacity="0.5"/>
+    </svg>`,
+
+  icon_sparkle_big: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="17" y="0"  width="6"  height="40" fill="#e0c0ff" opacity="0.9"/>
+    <rect x="0"  y="17" width="40" height="6"  fill="#e0c0ff" opacity="0.9"/>
+    <rect x="5"  y="5"  width="6"  height="6"  fill="#c070f0"/>
+    <rect x="29" y="5"  width="6"  height="6"  fill="#c070f0"/>
+    <rect x="5"  y="29" width="6"  height="6"  fill="#c070f0"/>
+    <rect x="29" y="29" width="6"  height="6"  fill="#c070f0"/>
+    <rect x="14" y="14" width="12" height="12" fill="#f0d0ff"/>
+    <rect x="16" y="16" width="8"  height="8"  fill="#ffffff"/>
+    <rect x="18" y="18" width="4"  height="4"  fill="#d080ff"/>
+    </svg>`,
+
+  icon_palette: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 36" width="40" height="36" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="4"  y="8"  width="32" height="24" fill="#e8d8b0"/><rect x="2"  y="12" width="4"  height="16" fill="#e8d8b0"/>
+    <rect x="34" y="12" width="4"  height="16" fill="#e8d8b0"/>
+    <rect x="6"  y="4"  width="28" height="6"  fill="#d8c8a0"/><rect x="10" y="2"  width="20" height="4"  fill="#d8c8a0"/>
+    <rect x="6"  y="10" width="6" height="6" fill="#f04040"/><rect x="14" y="10" width="6" height="6" fill="#40a0f0"/>
+    <rect x="22" y="10" width="6" height="6" fill="#f0e040"/><rect x="30" y="10" width="6" height="6" fill="#40c040"/>
+    <rect x="8"  y="20" width="6" height="6" fill="#f080c0"/><rect x="16" y="20" width="6" height="6" fill="#a040f0"/>
+    <rect x="24" y="20" width="6" height="6" fill="#f0a040"/><rect x="32" y="20" width="4" height="6" fill="#40d0d0"/>
+    <rect x="7"  y="11" width="2" height="2" fill="#ffffff" opacity="0.5"/>
+    </svg>`,
+
+  icon_leaf_big: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 40" width="36" height="40" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="16" y="32" width="4"  height="8"  fill="#3a6a20"/>
+    <rect x="12" y="6"  width="12" height="28" fill="#50a030"/>
+    <rect x="4"  y="14" width="10" height="16" fill="#50a030"/>
+    <rect x="22" y="14" width="10" height="16" fill="#50a030"/>
+    <rect x="6"  y="8"  width="8"  height="10" fill="#50a030"/>
+    <rect x="22" y="8"  width="8"  height="10" fill="#50a030"/>
+    <rect x="14" y="2"  width="8"  height="8"  fill="#50a030"/>
+    <rect x="14" y="10" width="3"  height="20" fill="#7acc40" opacity="0.6"/>
+    <rect x="17" y="12" width="3"  height="14" fill="#7acc40" opacity="0.45"/>
+    <rect x="8"  y="18" width="6"  height="3"  fill="#7acc40" opacity="0.4"/>
+    <rect x="22" y="18" width="6"  height="3"  fill="#7acc40" opacity="0.4"/>
+    </svg>`,
+
+  icon_seedling: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 36" width="28" height="36" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="12" y="20" width="4" height="16" fill="#4a7a20"/>
+    <rect x="10" y="8" width="8" height="14" fill="#60c030"/><rect x="4" y="12" width="8" height="8" fill="#60c030"/>
+    <rect x="16" y="12" width="8" height="8" fill="#60c030"/>
+    <rect x="8"  y="4"  width="6" height="8" fill="#60c030"/><rect x="14" y="4" width="6" height="8" fill="#60c030"/>
+    <rect x="11" y="0"  width="6" height="6" fill="#80e040"/>
+    <rect x="11" y="10" width="2" height="10" fill="#90f050" opacity="0.5"/>
+    </svg>`,
+
+  icon_runner: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" width="32" height="40" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="12" y="2" width="8" height="8" fill="#f0c8a0"/><rect x="10" y="0" width="12" height="4" fill="#4a2a10"/>
+    <rect x="10" y="10" width="12" height="14" fill="#3060c0"/>
+    <rect x="4"  y="12" width="8"  height="10" fill="#3060c0"/>
+    <rect x="20" y="14" width="8"  height="8"  fill="#3060c0"/>
+    <rect x="2"  y="20" width="8"  height="6"  fill="#f0c8a0"/>
+    <rect x="22" y="20" width="8"  height="6"  fill="#f0c8a0"/>
+    <rect x="10" y="24" width="10" height="14" fill="#2040a0"/>
+    <rect x="8"  y="34" width="8"  height="6"  fill="#202020"/>
+    <rect x="18" y="34" width="8"  height="6"  fill="#202020"/>
+    <rect x="13" y="6"  width="3"  height="3"  fill="#201008" opacity="0.6"/>
+    </svg>`,
+
+  icon_moon_big: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 40" width="36" height="40" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="10" y="0"  width="16" height="40" fill="#d4c4f0"/>
+    <rect x="4"  y="6"  width="8"  height="28" fill="#d4c4f0"/>
+    <rect x="24" y="6"  width="8"  height="28" fill="#d4c4f0"/>
+    <rect x="2"  y="12" width="4"  height="16" fill="#d4c4f0"/>
+    <rect x="0"  y="16" width="4"  height="8"  fill="#d4c4f0"/>
+    <rect x="6"  y="4"  width="4"  height="4"  fill="#d4c4f0"/>
+    <rect x="26" y="4"  width="4"  height="4"  fill="#d4c4f0"/>
+    <rect x="6"  y="32" width="4"  height="4"  fill="#d4c4f0"/>
+    <rect x="26" y="32" width="4"  height="4"  fill="#d4c4f0"/>
+    <rect x="30" y="12" width="4"  height="16" fill="#c0b0e0"/>
+    <rect x="32" y="16" width="4"  height="8"  fill="#c0b0e0"/>
+    <rect x="8"  y="10" width="6"  height="4"  fill="#b8a8dc" opacity="0.7"/>
+    <rect x="16" y="22" width="8"  height="4"  fill="#b8a8dc" opacity="0.6"/>
+    <rect x="10" y="28" width="4"  height="4"  fill="#b8a8dc" opacity="0.5"/>
+    </svg>`,
+
+  icon_handshake: ()=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 28" width="44" height="28" style="image-rendering:pixelated;display:block;margin:0 auto 8px">
+    <rect x="0"  y="16" width="14" height="10" fill="#f0c8a0"/>
+    <rect x="4"  y="10" width="10" height="8"  fill="#f0c8a0"/>
+    <rect x="8"  y="6"  width="6"  height="6"  fill="#f0c8a0"/>
+    <rect x="12" y="4"  width="6"  height="6"  fill="#f0c8a0"/>
+    <rect x="16" y="6"  width="6"  height="6"  fill="#f0c8a0"/>
+    <rect x="14" y="12" width="16" height="10" fill="#e8b890"/>
+    <rect x="22" y="6"  width="6"  height="6"  fill="#f0c8a0"/>
+    <rect x="26" y="4"  width="6"  height="6"  fill="#f0c8a0"/>
+    <rect x="30" y="6"  width="6"  height="6"  fill="#f0c8a0"/>
+    <rect x="30" y="10" width="10" height="8"  fill="#f0c8a0"/>
+    <rect x="30" y="16" width="14" height="10" fill="#f0c8a0"/>
+    <rect x="14" y="10" width="16" height="4"  fill="#d0a080"/>
+    </svg>`,
 };
 
-/* ============================================================
-   SCORES
-============================================================ */
-let scores = {
-  Programming:0, Nature:0, Science:0, Maths:0, Physics:0,
-  Philosophy:0, Color:0, PersonalDev:0, Health:0,
-  Spirituality:0, Family:0, Creative:0
-};
-
-/* ============================================================
-   RESULT DATA  — owner = which character "represents" this field
-============================================================ */
+/* ════════════════════════════════════════════
+   RESULT DATA — icon is now a PX function key
+════════════════════════════════════════════ */
 const resultData = {
-  Programming: {
-    owner:'pexxelina', icon:"💻", name:"The Programmer",
-    subtitle:"Architect of Logic",
-    desc:"Your mind is a machine — elegant, precise, always looking for the most efficient path. You find deep satisfaction in turning abstract ideas into working systems. Where others see chaos, you see code waiting to be written.",
-    trait:"Logical · Systematic · Builder"
-  },
-  Maths: {
-    owner:'pexxelina', icon:"∞", name:"The Mathematician",
-    subtitle:"Speaker of the Universe's Language",
-    desc:"You see beauty in abstraction. To you, an elegant proof is as moving as a sunset. You think in structures and relationships — and feel most at home where everything is rigorous, complete, and undeniably true.",
-    trait:"Abstract · Precise · Elegant"
-  },
-  Physics: {
-    owner:'pexxelina', icon:"⚛️", name:"The Physicist",
-    subtitle:"Force Whisperer",
-    desc:"You're never satisfied with surface explanations. You want the bedrock — the forces, fields, and fundamental laws beneath everything visible. Your mind reaches naturally toward the deepest questions reality offers.",
-    trait:"Deep · Visionary · Fearless"
-  },
-  Science: {
-    owner:'pexxelina', icon:"🔬", name:"The Scientist",
-    subtitle:"Seeker of What Is True",
-    desc:"Nothing satisfies you like the moment a hypothesis holds under scrutiny. You question assumptions, trust evidence, and refuse to accept 'probably' when 'certainly' is possible. You're driven by one question: how does this actually work?",
-    trait:"Curious · Methodical · Bold"
-  },
-  Philosophy: {
-    owner:'pexxelina', icon:"🦉", name:"The Philosopher",
-    subtitle:"Questioner of Questions",
-    desc:"You never accept the first answer. You dig beneath assumptions, sit comfortably in uncertainty, and trust rigorous thinking over comfortable conclusions. Your sharpest tool is a well-placed 'but why?'",
-    trait:"Reflective · Skeptical · Wise"
-  },
-  Creative: {
-    owner:'pexxelina', icon:"✨", name:"The Creator",
-    subtitle:"World-Builder",
-    desc:"You don't just experience reality — you reimagine it. Whether through writing, music, design, or ideas, you have an unstoppable need to make things that didn't exist before. Blank pages don't frighten you. They invite you.",
-    trait:"Imaginative · Free · Original"
-  },
-  Nature: {
-    owner:'skyonix', icon:"🌿", name:"The Naturalist",
-    subtitle:"Child of the Living World",
-    desc:"You think like a forest — slowly, deeply, in interconnected layers. Patient where others rush, observant where others overlook. You understand that the greatest truths grow rather than appear.",
-    trait:"Patient · Grounded · Alive"
-  },
-  Color: {
-    owner:'skyonix', icon:"🎨", name:"The Aesthete",
-    subtitle:"Living Palette",
-    desc:"Your world is saturated with meaning. You communicate through colour, form, and sensation — and you believe how something looks is part of what it means. Beauty, to you, is never decoration. It is information.",
-    trait:"Expressive · Vivid · Intuitive"
-  },
-  PersonalDev: {
-    owner:'skyonix', icon:"🌱", name:"The Cultivator",
-    subtitle:"Eternal Apprentice",
-    desc:"You treat life as a curriculum. Every setback is a lesson, every habit an experiment. You're driven by a quiet conviction that you can always be better — and you actually do the work to get there.",
-    trait:"Disciplined · Growth-minded · Resilient"
-  },
-  Health: {
-    owner:'skyonix', icon:"🏃", name:"The Vitalist",
-    subtitle:"Body in Motion",
-    desc:"You understand something most overlook: the mind and body are not separate. You invest in your physical self not out of vanity but out of respect for the vessel carrying you through life. Energy is your currency.",
-    trait:"Energetic · Grounded · Vital"
-  },
-  Spirituality: {
-    owner:'skyonix', icon:"🌙", name:"The Mystic",
-    subtitle:"Inner Cartographer",
-    desc:"You navigate by feeling and intuition. Drawn to the spaces between words — silence, ritual, stillness — you sense the universe holds meaning beyond what can be measured, and you've made peace with not needing proof.",
-    trait:"Intuitive · Still · Transcendent"
-  },
-  Family: {
-    owner:'skyonix', icon:"🤝", name:"The Keeper",
-    subtitle:"Holder of Bonds",
-    desc:"You know nothing matters more than the people around you. You're the one who remembers, who checks in, who shows up. Your intelligence is relational — your greatest strength is the depth of trust you build.",
-    trait:"Loyal · Empathic · Nurturing"
-  },
+  Programming: {owner:'pexxelina',iconKey:'icon_laptop',name:"The Programmer",subtitle:"Architect of Logic",desc:"Your mind is a machine — elegant, precise, always looking for the most efficient path. You find deep satisfaction in turning abstract ideas into working systems. Where others see chaos, you see code waiting to be written.",trait:"Logical · Systematic · Builder"},
+  Maths:       {owner:'pexxelina',iconKey:'icon_infinity',name:"The Mathematician",subtitle:"Speaker of the Universe's Language",desc:"You see beauty in abstraction. To you, an elegant proof is as moving as a sunset. You think in structures and relationships — and feel most at home where everything is rigorous, complete, and undeniably true.",trait:"Abstract · Precise · Elegant"},
+  Physics:     {owner:'pexxelina',iconKey:'icon_atom',name:"The Physicist",subtitle:"Force Whisperer",desc:"You're never satisfied with surface explanations. You want the bedrock — the forces, fields, and fundamental laws beneath everything visible. Your mind reaches naturally toward the deepest questions reality offers.",trait:"Deep · Visionary · Fearless"},
+  Science:     {owner:'pexxelina',iconKey:'icon_microscope',name:"The Scientist",subtitle:"Seeker of What Is True",desc:"Nothing satisfies you like the moment a hypothesis holds under scrutiny. You question assumptions, trust evidence, and refuse to accept 'probably' when 'certainly' is possible.",trait:"Curious · Methodical · Bold"},
+  Philosophy:  {owner:'pexxelina',iconKey:'icon_owl_big',name:"The Philosopher",subtitle:"Questioner of Questions",desc:"You never accept the first answer. You dig beneath assumptions, sit comfortably in uncertainty, and trust rigorous thinking over comfortable conclusions. Your sharpest tool is a well-placed 'but why?'",trait:"Reflective · Skeptical · Wise"},
+  Creative:    {owner:'pexxelina',iconKey:'icon_sparkle_big',name:"The Creator",subtitle:"World-Builder",desc:"You don't just experience reality — you reimagine it. Whether through writing, music, design, or ideas, you have an unstoppable need to make things that didn't exist before. Blank pages don't frighten you. They invite you.",trait:"Imaginative · Free · Original"},
+  Nature:      {owner:'skyonix',  iconKey:'icon_leaf_big',name:"The Naturalist",subtitle:"Child of the Living World",desc:"You think like a forest — slowly, deeply, in interconnected layers. Patient where others rush, observant where others overlook. You understand that the greatest truths grow rather than appear.",trait:"Patient · Grounded · Alive"},
+  Color:       {owner:'skyonix',  iconKey:'icon_palette',name:"The Aesthete",subtitle:"Living Palette",desc:"Your world is saturated with meaning. You communicate through colour, form, and sensation — and you believe how something looks is part of what it means. Beauty, to you, is never decoration. It is information.",trait:"Expressive · Vivid · Intuitive"},
+  PersonalDev: {owner:'skyonix',  iconKey:'icon_seedling',name:"The Cultivator",subtitle:"Eternal Apprentice",desc:"You treat life as a curriculum. Every setback is a lesson, every habit an experiment. You're driven by a quiet conviction that you can always be better — and you actually do the work to get there.",trait:"Disciplined · Growth-minded · Resilient"},
+  Health:      {owner:'skyonix',  iconKey:'icon_runner',name:"The Vitalist",subtitle:"Body in Motion",desc:"You understand something most overlook: the mind and body are not separate. You invest in your physical self not out of vanity but out of respect for the vessel carrying you through life. Energy is your currency.",trait:"Energetic · Grounded · Vital"},
+  Spirituality:{owner:'skyonix',  iconKey:'icon_moon_big',name:"The Mystic",subtitle:"Inner Cartographer",desc:"You navigate by feeling and intuition. Drawn to the spaces between words — silence, ritual, stillness — you sense the universe holds meaning beyond what can be measured.",trait:"Intuitive · Still · Transcendent"},
+  Family:      {owner:'skyonix',  iconKey:'icon_handshake',name:"The Keeper",subtitle:"Holder of Bonds",desc:"You know nothing matters more than the people around you. You're the one who remembers, who checks in, who shows up. Your intelligence is relational — your greatest strength is the depth of trust you build.",trait:"Loyal · Empathic · Nurturing"},
 };
 
-/* ============================================================
-   PIXEL SPRITE SVGs
-============================================================ */
+/* ════════════════════════════════════════════
+   SCORES & SCENES
+════════════════════════════════════════════ */
+let scores={Programming:0,Nature:0,Science:0,Maths:0,Physics:0,Philosophy:0,Color:0,PersonalDev:0,Health:0,Spirituality:0,Family:0,Creative:0};
 
-// ── SKYONIX (nature spirit boy) ──
-function skyonixSVG(frame) {
-  const orbO = frame ? "0.9" : "0.5";
-  const orbR = frame ? 7 : 5;
-  const aLift= frame ? -4 : 0;
-  const innerR = Math.max(2, orbR - 3);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 90" width="145" height="190" style="image-rendering:pixelated;display:block">
-  <ellipse cx="32" cy="84" rx="15" ry="3" fill="#4a7a2a" opacity="0.35"/>
-  <!-- robe -->
-  <rect x="18" y="40" width="28" height="44" fill="#3a5a20"/>
-  <rect x="14" y="46" width="6"  height="32" fill="#2a4418"/>
-  <rect x="44" y="46" width="6"  height="32" fill="#2a4418"/>
-  <!-- hem -->
-  <rect x="18" y="78" width="5" height="4" fill="#4a7a2a"/>
-  <rect x="27" y="80" width="5" height="4" fill="#4a7a2a"/>
-  <rect x="36" y="78" width="5" height="4" fill="#4a7a2a"/>
-  <rect x="43" y="80" width="3" height="4" fill="#4a7a2a"/>
-  <!-- vine belt -->
-  <rect x="18" y="55" width="28" height="4" fill="#6aaa3a"/>
-  <rect x="21" y="54" width="4"  height="6" fill="#5a8a2a"/>
-  <rect x="30" y="53" width="4"  height="7" fill="#7ac040"/>
-  <rect x="40" y="54" width="4"  height="6" fill="#5a8a2a"/>
-  <!-- neck -->
-  <rect x="28" y="34" width="8" height="8" fill="#b8c890"/>
-  <!-- head -->
-  <rect x="20" y="15" width="24" height="21" fill="#b8c890"/>
-  <!-- leaf crown -->
-  <rect x="14" y="11" width="36" height="7" fill="#2a4a18"/>
-  <rect x="18" y="5"  width="7"  height="8" fill="#4a8a28"/>
-  <rect x="28" y="3"  width="8"  height="10" fill="#5aaa30"/>
-  <rect x="39" y="5"  width="7"  height="8" fill="#4a8a28"/>
-  <rect x="15" y="13" width="4"  height="4" fill="#4a7a2a"/>
-  <rect x="45" y="13" width="4"  height="4" fill="#4a7a2a"/>
-  <rect x="30" y="4"  width="4"  height="5" fill="#8fbc3f" opacity="${orbO}"/>
-  <!-- eyes -->
-  <rect x="24" y="22" width="4" height="5" fill="#5aaa30"/>
-  <rect x="36" y="22" width="4" height="5" fill="#5aaa30"/>
-  <rect x="24" y="22" width="2" height="2" fill="#d0ffb0"/>
-  <rect x="36" y="22" width="2" height="2" fill="#d0ffb0"/>
-  <!-- face mark -->
-  <rect x="30" y="29" width="4" height="2" fill="#4a6a2a" opacity="0.5"/>
-  <!-- left arm + orb -->
-  <rect x="7"  y="${40+aLift}" width="11" height="22" fill="#3a5a20"/>
-  <rect x="4"  y="${58+aLift}" width="10" height="8"  fill="#b8c890"/>
-  <circle cx="9" cy="${54+aLift}" r="${orbR}" fill="#7ec850" opacity="${orbO}"/>
-  <circle cx="9" cy="${54+aLift}" r="${innerR}" fill="#d0ffb0"/>
-  <!-- right arm -->
-  <rect x="46" y="44" width="11" height="20" fill="#3a5a20"/>
-  <rect x="50" y="58" width="10" height="8"  fill="#b8c890"/>
-</svg>`;
-}
-
-// ── PEXXELINA (nature spirit girl) ──
-function pexxelinaSVG(frame) {
-  const orbO  = frame ? "0.9" : "0.5";
-  const orbR  = frame ? 7 : 5;
-  const aLift = frame ? -4 : 0;
-  const innerR = Math.max(2, orbR - 3);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 90" width="145" height="190" style="image-rendering:pixelated;display:block">
-  <ellipse cx="32" cy="84" rx="15" ry="3" fill="#9a4aaa" opacity="0.3"/>
-  <!-- dress body -->
-  <rect x="17" y="40" width="30" height="44" fill="#7a2a9a"/>
-  <rect x="13" y="46" width="6"  height="32" fill="#5a1a7a"/>
-  <rect x="45" y="46" width="6"  height="32" fill="#5a1a7a"/>
-  <!-- dress flare at bottom -->
-  <rect x="14" y="76" width="36" height="6" fill="#8a3aaa"/>
-  <rect x="11" y="80" width="42" height="4" fill="#7a2a9a"/>
-  <!-- flower belt -->
-  <rect x="17" y="55" width="30" height="4" fill="#c060d0"/>
-  <rect x="20" y="53" width="4"  height="7" fill="#e080e0"/>
-  <rect x="30" y="52" width="4"  height="8" fill="#f090f0"/>
-  <rect x="41" y="53" width="4"  height="7" fill="#e080e0"/>
-  <!-- centre flower detail -->
-  <rect x="31" y="53" width="2" height="2" fill="#fff0ff"/>
-  <!-- neck -->
-  <rect x="28" y="34" width="8" height="8" fill="#e8c8b0"/>
-  <!-- head -->
-  <rect x="20" y="14" width="24" height="22" fill="#e8c8b0"/>
-  <!-- hair top + sides -->
-  <rect x="18" y="10" width="28" height="8" fill="#3a1a5a"/>
-  <rect x="14" y="14" width="8"  height="18" fill="#3a1a5a"/>
-  <rect x="42" y="14" width="8"  height="18" fill="#3a1a5a"/>
-  <!-- hair flowing down -->
-  <rect x="14" y="30" width="6"  height="14" fill="#3a1a5a"/>
-  <rect x="44" y="30" width="6"  height="14" fill="#3a1a5a"/>
-  <!-- flower on hair -->
-  <rect x="38" y="8"  width="6"  height="6"  fill="#f080c0"/>
-  <rect x="40" y="6"  width="2"  height="2"  fill="#fff0ff"/>
-  <!-- eyes (purple glow) -->
-  <rect x="24" y="22" width="4" height="5" fill="#c060d0"/>
-  <rect x="36" y="22" width="4" height="5" fill="#c060d0"/>
-  <rect x="24" y="22" width="2" height="2" fill="#ffd0ff"/>
-  <rect x="36" y="22" width="2" height="2" fill="#ffd0ff"/>
-  <!-- smile -->
-  <rect x="27" y="29" width="2" height="2" fill="#b07080" opacity="0.8"/>
-  <rect x="29" y="31" width="6" height="2" fill="#b07080" opacity="0.9"/>
-  <rect x="35" y="29" width="2" height="2" fill="#b07080" opacity="0.8"/>
-  <!-- left arm + orb -->
-  <rect x="7"  y="${40+aLift}" width="10" height="22" fill="#7a2a9a"/>
-  <rect x="4"  y="${58+aLift}" width="10" height="8"  fill="#e8c8b0"/>
-  <circle cx="9" cy="${54+aLift}" r="${orbR}" fill="#d060e0" opacity="${orbO}"/>
-  <circle cx="9" cy="${54+aLift}" r="${innerR}" fill="#ffd0ff"/>
-  <!-- right arm -->
-  <rect x="47" y="44" width="10" height="20" fill="#7a2a9a"/>
-  <rect x="50" y="58" width="10" height="8"  fill="#e8c8b0"/>
-</svg>`;
-}
-
-/* ============================================================
-   SCENES
-============================================================ */
-const scenes = [
-
-  // ── TITLE (both characters shown side by side) ──
-  {
-    type:"dialogue", isTitle:true,
-    text:"The Grove",
-    sprite:"both",
-    buttonText:"Enter",
-    sound:"blip",
-  },
-
-  // ── CREATOR NOTE ──
-  {
-    type:"dialogue", isCreatorNote:true,
-    text:"<strong>Creator Note:</strong> Find a comfy spot before you start — grab a drink, get cozy, and take your time with each question. This quiz works best when you answer from the gut, not the brain. Good luck, wanderer. 🌿",
-    sprite:"both",
-    buttonText:"Close",
-    sound:"blip",
-  },
-
-  // ── INTRO ──
-  {
-    type:"dialogue", speaker:"Skyonix", sprite:"skyonix",
-    text:"Hey! I'm Skyonix, guardian of life, growth, and all things felt deeply. Welcome to the Grove.",
-    fadeIn:true, buttonText:"Hello!", sound:"whoosh",
-  },
-  {
-    type:"dialogue", speaker:"Pexxelina", sprite:"pexxelina",
-    text:"And I'm Pexxelina! Guardian of logic, creation, and the cosmos. So glad you found your way here.",
-    fadeIn:true, buttonText:"Nice to meet you both!", sound:"whoosh",
-  },
-  {
-    type:"dialogue", speaker:"Skyonix", sprite:"skyonix",
-    text:"Together, we tend to twelve paths of knowledge — each one shaped by a different kind of mind.",
-    buttonText:"Tell me more", sound:"blip",
-  },
-  {
-    type:"dialogue", speaker:"Pexxelina", sprite:"pexxelina",
-    text:"One of those paths belongs to you. Answer truthfully — not what sounds smart, but what feels honest. The Grove doesn't judge.",
-    buttonText:"I understand", sound:"blip",
-  },
-  {
-    type:"dialogue", speaker:"Skyonix", sprite:"skyonix",
-    text:"Let's start simply — with how you live day to day.",
-    buttonText:"Let's go!", sound:"chime",
-  },
-
-  // ══ SET 1 ══
-  {
-    type:"question",
-    text:"Your perfect free afternoon looks like:",
-    options:[
-      {text:"Building or coding something",          cats:["Programming","Maths"]},
-      {text:"A long walk somewhere green and quiet", cats:["Nature","Health"]},
-      {text:"Reading or watching a documentary",     cats:["Science","Philosophy"]},
-      {text:"Creating — art, design, or writing",     cats:["Creative","Color"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"You feel most alive when:",
-    options:[
-      {text:"A system you built finally clicks into place", cats:["Programming","Maths"]},
-      {text:"Surrounded by nature or people you love",      cats:["Nature","Family"]},
-      {text:"You've just understood something new",         cats:["Science","Physics"]},
-      {text:"Alone, deep in your own thoughts",             cats:["Philosophy","Spirituality"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"Pick the word that resonates most:",
-    options:[
-      {text:"Structure",  cats:["Maths","Programming"]},
-      {text:"Growth",     cats:["Nature","PersonalDev"]},
-      {text:"Wonder",     cats:["Science","Physics"]},
-      {text:"Stillness",  cats:["Spirituality","Philosophy"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"Your bookshelf or watch list leans toward:",
-    options:[
-      {text:"Tech, logic, or systems thinking",     cats:["Programming","Science"]},
-      {text:"Self-growth, wellness, or psychology", cats:["PersonalDev","Health"]},
-      {text:"Art, design, or culture",              cats:["Creative","Color"]},
-      {text:"Philosophy, physics, or deep ideas",   cats:["Physics","Philosophy"]},
-    ],
-  },
-
-  // ── TRANSITION 1 ──
-  {
-    type:"dialogue", speaker:"Pexxelina", sprite:"pexxelina",
-    text:"Interesting! Now let me ask a few things about how your mind works from the inside.",
-    buttonText:"Sure!", sound:"chime",
-  },
-
-  // ══ SET 2 ══
-  {
-    type:"question",
-    text:"Faced with a difficult problem, you:",
-    options:[
-      {text:"Break it into logical steps",             cats:["Programming","Maths"]},
-      {text:"Research and gather evidence first",       cats:["Science","Physics"]},
-      {text:"Sit quietly and let intuition guide you", cats:["Spirituality","Philosophy"]},
-      {text:"Talk it through with someone you trust",  cats:["Family","PersonalDev"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"Which of these feels most true to you?",
-    options:[
-      {text:"Numbers reveal the fabric of everything",    cats:["Maths","Physics"]},
-      {text:"Questions matter more than answers",         cats:["Philosophy","Science"]},
-      {text:"The body and mind are deeply connected",     cats:["Health","Spirituality"]},
-      {text:"Creativity is the most human act there is", cats:["Creative","Color"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"Your greatest natural strength is probably:",
-    options:[
-      {text:"Analytical precision and clear reasoning",  cats:["Maths","Programming"]},
-      {text:"Deep empathy and emotional intelligence",   cats:["Family","PersonalDev"]},
-      {text:"Imagination and completely original ideas", cats:["Creative","Color"]},
-      {text:"Noticing patterns that others miss",        cats:["Science","Nature"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"The kind of problem you actually enjoy:",
-    options:[
-      {text:"A puzzle or algorithm to crack",             cats:["Programming","Maths"]},
-      {text:"A debate with no clean resolution",          cats:["Philosophy","Physics"]},
-      {text:"An open creative project with full freedom", cats:["Creative","Color"]},
-      {text:"Understanding how a living system works",    cats:["Nature","Science"]},
-    ],
-  },
-
-  // ── TRANSITION 2 ──
-  {
-    type:"dialogue", speaker:"Pexxelina", sprite:"pexxelina",
-    text:"These last questions go deeper. Answer from somewhere honest — the Grove is listening carefully.",
-    buttonText:"I'm ready", sound:"chime",
-  },
-
-  // ══ SET 3 ══
-  {
-    type:"question",
-    text:"More than anything, you are driven by:",
-    options:[
-      {text:"Building things that actually work",               cats:["Programming","Creative"]},
-      {text:"Understanding the universe at its most fundamental",cats:["Physics","Science"]},
-      {text:"Becoming the best version of yourself",            cats:["PersonalDev","Health"]},
-      {text:"Deep connection — to people or something greater", cats:["Family","Spirituality"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"When overwhelmed, you instinctively:",
-    options:[
-      {text:"Create order — lists, plans, systems",   cats:["Programming","Maths"]},
-      {text:"Go outside or move your body",           cats:["Nature","Health"]},
-      {text:"Reflect, journal, or sit in silence",    cats:["Spirituality","Philosophy"]},
-      {text:"Reach out to someone close to you",      cats:["Family","PersonalDev"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"Your relationship with beauty:",
-    options:[
-      {text:"Elegant code and clean proofs are beautiful",   cats:["Maths","Programming"]},
-      {text:"I find it in living things and wild places",    cats:["Nature","Spirituality"]},
-      {text:"It lives in colour, form, and emotional truth", cats:["Color","Creative"]},
-      {text:"In deep understanding of how reality works",    cats:["Physics","Science"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"Looking back, you feel most proud of:",
-    options:[
-      {text:"Something I built or brought into being",    cats:["Programming","Creative"]},
-      {text:"How much I've grown and changed",            cats:["PersonalDev","Philosophy"]},
-      {text:"The bonds I've built and kept",              cats:["Family","Spirituality"]},
-      {text:"Something I learned or taught to others",   cats:["Science","Maths","Physics"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"One free year, no obligations — you'd spend it:",
-    options:[
-      {text:"Mastering a technical skill completely",          cats:["Programming","Maths"]},
-      {text:"Living somewhere wild and close to nature",       cats:["Nature","Health"]},
-      {text:"Studying philosophy, the cosmos, or deep history",cats:["Philosophy","Physics"]},
-      {text:"Creating something large and deeply meaningful",  cats:["Creative","Color"]},
-    ],
-  },
-  {
-    type:"question",
-    text:"At your core, you are most like:",
-    options:[
-      {text:"The Architect — I build systems and worlds",       cats:["Programming","Maths","Creative"]},
-      {text:"The Explorer — I discover what exists out there",  cats:["Science","Nature","Physics"]},
-      {text:"The Sage — I seek meaning and deeper wisdom",      cats:["Philosophy","Spirituality","PersonalDev"]},
-      {text:"The Guardian — I nurture, sustain and protect",    cats:["Family","Health","Color"]},
-    ],
-  },
+const scenes=[
+  {type:"dialogue",isTitle:true,text:"The Grove",sprite:"both",buttonText:"Enter",sound:"blip"},
+  {type:"dialogue",isCreatorNote:true,text:"<strong>Creator Note:</strong> Find a comfy spot before you start — grab a drink, get cozy, and take your time with each question. This quiz works best when you answer from the gut, not the brain. Good luck, wanderer.",sprite:"both",buttonText:"Close",sound:"blip"},
+  {type:"dialogue",speaker:"Skyonix",sprite:"skyonix",text:"Hey! I'm Skyonix, guardian of life, growth, and all things felt deeply. Welcome to the Grove.",fadeIn:true,buttonText:"Hello!",sound:"whoosh"},
+  {type:"dialogue",speaker:"Pexxelina",sprite:"pexxelina",text:"And I'm Pexxelina! Guardian of logic, creation, and the cosmos. So glad you found your way here.",fadeIn:true,buttonText:"Nice to meet you both!",sound:"whoosh"},
+  {type:"dialogue",speaker:"Skyonix",sprite:"skyonix",text:"Together, we tend to twelve paths of knowledge — each one shaped by a different kind of mind.",buttonText:"Tell me more",sound:"blip"},
+  {type:"dialogue",speaker:"Pexxelina",sprite:"pexxelina",text:"One of those paths belongs to you. Answer truthfully — not what sounds smart, but what feels honest. The Grove doesn't judge.",buttonText:"I understand",sound:"blip"},
+  {type:"dialogue",speaker:"Skyonix",sprite:"skyonix",text:"Let's start simply — with how you live day to day.",buttonText:"Let's go!",sound:"chime"},
+  {type:"question",text:"Your perfect free afternoon looks like:",options:[{text:"Building or coding something",cats:["Programming","Maths"]},{text:"A long walk somewhere green and quiet",cats:["Nature","Health"]},{text:"Reading or watching a documentary",cats:["Science","Philosophy"]},{text:"Creating — art, design, or writing",cats:["Creative","Color"]}]},
+  {type:"question",text:"You feel most alive when:",options:[{text:"A system you built finally clicks into place",cats:["Programming","Maths"]},{text:"Surrounded by nature or people you love",cats:["Nature","Family"]},{text:"You've just understood something new",cats:["Science","Physics"]},{text:"Alone, deep in your own thoughts",cats:["Philosophy","Spirituality"]}]},
+  {type:"question",text:"Pick the word that resonates most:",options:[{text:"Structure",cats:["Maths","Programming"]},{text:"Growth",cats:["Nature","PersonalDev"]},{text:"Wonder",cats:["Science","Physics"]},{text:"Stillness",cats:["Spirituality","Philosophy"]}]},
+  {type:"question",text:"Your bookshelf or watch list leans toward:",options:[{text:"Tech, logic, or systems thinking",cats:["Programming","Science"]},{text:"Self-growth, wellness, or psychology",cats:["PersonalDev","Health"]},{text:"Art, design, or culture",cats:["Creative","Color"]},{text:"Philosophy, physics, or deep ideas",cats:["Physics","Philosophy"]}]},
+  {type:"dialogue",speaker:"Pexxelina",sprite:"pexxelina",text:"Interesting! Now let me ask a few things about how your mind works from the inside.",buttonText:"Sure!",sound:"chime"},
+  {type:"question",text:"Faced with a difficult problem, you:",options:[{text:"Break it into logical steps",cats:["Programming","Maths"]},{text:"Research and gather evidence first",cats:["Science","Physics"]},{text:"Sit quietly and let intuition guide you",cats:["Spirituality","Philosophy"]},{text:"Talk it through with someone you trust",cats:["Family","PersonalDev"]}]},
+  {type:"question",text:"Which of these feels most true to you?",options:[{text:"Numbers reveal the fabric of everything",cats:["Maths","Physics"]},{text:"Questions matter more than answers",cats:["Philosophy","Science"]},{text:"The body and mind are deeply connected",cats:["Health","Spirituality"]},{text:"Creativity is the most human act there is",cats:["Creative","Color"]}]},
+  {type:"question",text:"Your greatest natural strength is probably:",options:[{text:"Analytical precision and clear reasoning",cats:["Maths","Programming"]},{text:"Deep empathy and emotional intelligence",cats:["Family","PersonalDev"]},{text:"Imagination and completely original ideas",cats:["Creative","Color"]},{text:"Noticing patterns that others miss",cats:["Science","Nature"]}]},
+  {type:"question",text:"The kind of problem you actually enjoy:",options:[{text:"A puzzle or algorithm to crack",cats:["Programming","Maths"]},{text:"A debate with no clean resolution",cats:["Philosophy","Physics"]},{text:"An open creative project with full freedom",cats:["Creative","Color"]},{text:"Understanding how a living system works",cats:["Nature","Science"]}]},
+  {type:"dialogue",speaker:"Pexxelina",sprite:"pexxelina",text:"These last questions go deeper. Answer from somewhere honest — the Grove is listening carefully.",buttonText:"I'm ready",sound:"chime"},
+  {type:"question",text:"More than anything, you are driven by:",options:[{text:"Building things that actually work",cats:["Programming","Creative"]},{text:"Understanding the universe at its most fundamental",cats:["Physics","Science"]},{text:"Becoming the best version of yourself",cats:["PersonalDev","Health"]},{text:"Deep connection — to people or something greater",cats:["Family","Spirituality"]}]},
+  {type:"question",text:"When overwhelmed, you instinctively:",options:[{text:"Create order — lists, plans, systems",cats:["Programming","Maths"]},{text:"Go outside or move your body",cats:["Nature","Health"]},{text:"Reflect, journal, or sit in silence",cats:["Spirituality","Philosophy"]},{text:"Reach out to someone close to you",cats:["Family","PersonalDev"]}]},
+  {type:"question",text:"Your relationship with beauty:",options:[{text:"Elegant code and clean proofs are beautiful",cats:["Maths","Programming"]},{text:"I find it in living things and wild places",cats:["Nature","Spirituality"]},{text:"It lives in colour, form, and emotional truth",cats:["Color","Creative"]},{text:"In deep understanding of how reality works",cats:["Physics","Science"]}]},
+  {type:"question",text:"Looking back, you feel most proud of:",options:[{text:"Something I built or brought into being",cats:["Programming","Creative"]},{text:"How much I've grown and changed",cats:["PersonalDev","Philosophy"]},{text:"The bonds I've built and kept",cats:["Family","Spirituality"]},{text:"Something I learned or taught to others",cats:["Science","Maths","Physics"]}]},
+  {type:"question",text:"One free year, no obligations — you'd spend it:",options:[{text:"Mastering a technical skill completely",cats:["Programming","Maths"]},{text:"Living somewhere wild and close to nature",cats:["Nature","Health"]},{text:"Studying philosophy, the cosmos, or deep history",cats:["Philosophy","Physics"]},{text:"Creating something large and deeply meaningful",cats:["Creative","Color"]}]},
+  {type:"question",text:"At your core, you are most like:",options:[{text:"The Architect — I build systems and worlds",cats:["Programming","Maths","Creative"]},{text:"The Explorer — I discover what exists out there",cats:["Science","Nature","Physics"]},{text:"The Sage — I seek meaning and deeper wisdom",cats:["Philosophy","Spirituality","PersonalDev"]},{text:"The Guardian — I nurture, sustain and protect",cats:["Family","Health","Color"]}]},
 ];
 
-/* ============================================================
-   STATE
-============================================================ */
-let currentScene = 0;
-let skyFrame = 0, pexFrame = 0;
-let spriteTimer = null;
-
-/* ============================================================
-   THEME SWITCHER
-============================================================ */
-function setTheme(who) {
-  // who = 'skyonix' | 'pexxelina' | 'both' | null
-  document.body.classList.remove('theme-skyonix', 'theme-pexxelina');
-  if (who === 'pexxelina') {
-    document.body.classList.add('theme-pexxelina');
-  } else {
-    // skyonix, both, title, questions — all stay green
-    document.body.classList.add('theme-skyonix');
-  }
-}
-
-/* ============================================================
-   SPRITE HELPERS
-============================================================ */
-function renderSprite(scene, imageDiv) {
-  clearInterval(spriteTimer);
-  imageDiv.innerHTML = "";
-
-  // Switch theme based on who's speaking
-  setTheme(scene.sprite || null);
-
-  if (!scene.sprite) return;
-
-  if (scene.sprite === "both") {
-    const dual = document.createElement("div");
-    dual.className = "dual-sprite";
-
-    const wSky = document.createElement("div");
-    wSky.className = "sprite-wrap";
-    wSky.innerHTML = skyonixSVG(0);
-
-    const wPex = document.createElement("div");
-    wPex.className = "sprite-wrap delay";
-    wPex.innerHTML = pexxelinaSVG(0);
-
-    dual.appendChild(wSky);
-    dual.appendChild(wPex);
-    imageDiv.appendChild(dual);
-
-    if (scene.fadeIn) {
-      dual.classList.add("fade-in");
-      setTimeout(() => dual.classList.add("show"), 10);
-    }
-
-    spriteTimer = setInterval(() => {
-      skyFrame ^= 1; pexFrame ^= 1;
-      wSky.innerHTML = skyonixSVG(skyFrame);
-      wPex.innerHTML = pexxelinaSVG(pexFrame);
-    }, 650);
-
-  } else if (scene.sprite === "skyonix") {
-    const wrap = document.createElement("div");
-    wrap.className = "sprite-wrap";
-    wrap.innerHTML = skyonixSVG(0);
-    if (scene.fadeIn) { wrap.classList.add("fade-in"); setTimeout(()=>wrap.classList.add("show"),10); }
-    imageDiv.appendChild(wrap);
-    spriteTimer = setInterval(() => { skyFrame ^= 1; wrap.innerHTML = skyonixSVG(skyFrame); }, 650);
-
-  } else if (scene.sprite === "pexxelina") {
-    const wrap = document.createElement("div");
-    wrap.className = "sprite-wrap";
-    wrap.innerHTML = pexxelinaSVG(0);
-    if (scene.fadeIn) { wrap.classList.add("fade-in"); setTimeout(()=>wrap.classList.add("show"),10); }
-    imageDiv.appendChild(wrap);
-    spriteTimer = setInterval(() => { pexFrame ^= 1; wrap.innerHTML = pexxelinaSVG(pexFrame); }, 650);
-  }
-}
-
-/* ============================================================
-   SHOW SCENE
-============================================================ */
-function showScene() {
-  const scene      = scenes[currentScene];
-  const textBox    = document.getElementById("text-box");
-  const buttonsDiv = document.getElementById("buttons");
-  const imageDiv   = document.getElementById("image");
-
-  textBox.classList.remove("title-font", "question-font", "dialogue-scene", "results-active");
-  buttonsDiv.innerHTML = "";
-
-  // Sprite
-  renderSprite(scene, imageDiv);
-
-  // Text box classes
-  if (scene.isTitle) {
-    textBox.classList.add("title-font");
-  } else if (scene.type === "question") {
-    textBox.classList.add("question-font");
-  } else if (!scene.isCreatorNote) {
-    textBox.classList.add("dialogue-scene");
-  }
-
-  // Speaker tag
-  let speakerHTML = "";
-  if (scene.speaker === "Skyonix") {
-    speakerHTML = `<span class="speaker-tag skyonix">Skyonix</span><br>`;
-  } else if (scene.speaker === "Pexxelina") {
-    speakerHTML = `<span class="speaker-tag pexxelina">Pexxelina</span><br>`;
-  }
-
-  // Text
-  if (scene.isCreatorNote) {
-    textBox.innerHTML = `<div class="creator-note">${scene.text}</div>`;
-  } else if (scene.isTitle) {
-    textBox.textContent = scene.text;
-  } else {
-    textBox.innerHTML = speakerHTML + scene.text;
-  }
-
-  // Buttons
-  if (scene.type === "dialogue") {
-    const btn = document.createElement("button");
-    btn.textContent = scene.buttonText || "Next";
-    btn.classList.add("dialogue-btn");
-    btn.onclick = () => {
-      if (scene.sound && sounds[scene.sound]) sounds[scene.sound]();
-      currentScene++;
-      showScene();
+/* ════════════════════════════════════════════
+   PIXEL CANVAS (square pixel particles)
+════════════════════════════════════════════ */
+(function(){
+  const cv=document.getElementById('pixel-canvas'),ctx=cv.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  const cols=['rgba(106,170,58,','rgba(200,240,150,','rgba(180,80,240,','rgba(220,160,255,','rgba(80,200,200,','rgba(240,200,80,'];
+  function Pt(){
+    this.reset=function(){
+      this.x=Math.random()*W;this.y=Math.random()*H;
+      this.size=[2,2,4,4,4,6][Math.floor(Math.random()*6)];
+      this.vy=-(Math.random()*0.5+0.15);this.vx=(Math.random()-.5)*0.3;
+      this.life=0;this.maxLife=200+Math.random()*300;
+      this.col=cols[Math.floor(Math.random()*cols.length)];
     };
-    buttonsDiv.appendChild(btn);
+    this.reset();this.life=Math.random()*this.maxLife;
+  }
+  for(let i=0;i<90;i++)pts.push(new Pt());
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.life++;p.x+=p.vx;p.y+=p.vy;
+      const t=p.life/p.maxLife;
+      const a=t<0.15?(t/0.15)*0.45:t>0.8?((1-t)/0.2)*0.45:0.45;
+      ctx.fillStyle=p.col+a+')';
+      ctx.fillRect(Math.round(p.x),Math.round(p.y),p.size,p.size);
+      if(p.life>=p.maxLife)p.reset();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 
-  } else if (scene.type === "question") {
-    scene.options.forEach(option => {
-      const btn = document.createElement("button");
-      btn.textContent = option.text;
-      btn.classList.add("question-btn");
-      btn.onclick = () => {
-        sounds.select();
-        option.cats.forEach(cat => { if (scores[cat] !== undefined) scores[cat]++; });
-        currentScene++;
-        if (currentScene >= scenes.length) showResult();
-        else showScene();
-      };
+/* ════════════════════════════════════════════
+   AUDIO
+════════════════════════════════════════════ */
+const AudioCtx=window.AudioContext||window.webkitAudioContext;let audioCtx=null;
+function getCtx(){if(!audioCtx)audioCtx=new AudioCtx();return audioCtx;}
+function playTone(f,t,d,g,fade){try{const ac=getCtx(),o=ac.createOscillator(),gn=ac.createGain();o.connect(gn);gn.connect(ac.destination);o.type=t||'square';o.frequency.setValueAtTime(f,ac.currentTime);gn.gain.setValueAtTime(g||0.12,ac.currentTime);if(fade)gn.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+d);o.start(ac.currentTime);o.stop(ac.currentTime+d);}catch(e){}}
+function playChord(fs,t,d,g){fs.forEach(f=>playTone(f,t,d,(g||0.08)/fs.length,true));}
+const sounds={
+  blip:()=>{playTone(880,'square',0.06,0.1,true);setTimeout(()=>playTone(1100,'square',0.05,0.08,true),40);},
+  select:()=>{playTone(660,'square',0.05,0.1,true);setTimeout(()=>playTone(990,'square',0.07,0.09,true),30);},
+  chime:()=>{playTone(523,'sine',0.18,0.1,true);setTimeout(()=>playTone(659,'sine',0.18,0.09,true),80);setTimeout(()=>playTone(784,'sine',0.22,0.08,true),160);},
+  fanfare:()=>{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.25,0.1,true),i*90));setTimeout(()=>playChord([523,659,784],'sine',0.5,0.18),420);},
+  whoosh:()=>{try{const ac=getCtx(),buf=ac.createBuffer(1,ac.sampleRate*0.25,ac.sampleRate),data=buf.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(1-i/data.length);const src=ac.createBufferSource();src.buffer=buf;const flt=ac.createBiquadFilter();flt.type='bandpass';flt.frequency.value=1200;flt.Q.value=0.5;const gn=ac.createGain();gn.gain.setValueAtTime(0.18,ac.currentTime);gn.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.25);src.connect(flt);flt.connect(gn);gn.connect(ac.destination);src.start();src.stop(ac.currentTime+0.25);}catch(e){}},
+  enter:()=>{[330,440,523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'square',0.12,0.08,true),i*60));}
+};
+
+/* ════════════════════════════════════════════
+   INTRO SETUP
+════════════════════════════════════════════ */
+let introSkyFrame=0,introPexFrame=0,introSpriteTimer=null;
+document.getElementById('intro-sky-sprite').innerHTML=PX.skyonix(0);
+document.getElementById('intro-pex-sprite').innerHTML=PX.pexxelina(0);
+introSpriteTimer=setInterval(()=>{
+  introSkyFrame^=1;introPexFrame^=1;
+  document.getElementById('intro-sky-sprite').innerHTML=PX.skyonix(introSkyFrame);
+  document.getElementById('intro-pex-sprite').innerHTML=PX.pexxelina(introPexFrame);
+},650);
+
+// Icon row — pixel SVGs instead of emojis
+(function(){
+  const row=document.getElementById('intro-icons');
+  const icons=[
+    PX.leaf('#4a8a28',28,32),
+    PX.icon_laptop(),
+    PX.icon_atom(),
+    PX.icon_owl_big(),
+    PX.icon_sparkle_big(),
+    PX.icon_palette(),
+  ];
+  icons.forEach(svg=>{
+    const wrap=document.createElement('div');
+    wrap.className='intro-icon-item';
+    wrap.innerHTML=svg;
+    row.appendChild(wrap);
+  });
+})();
+
+// Moon reveal
+setTimeout(()=>{document.getElementById('px-moon').style.opacity='1';},400);
+
+// Stars
+(function(){
+  const sky=document.getElementById('intro-sky');
+  const types=['green','purple','white','dim green','dim purple','big green','big purple'];
+  for(let i=0;i<110;i++){
+    const s=document.createElement('div');
+    const t=types[Math.floor(Math.random()*types.length)].split(' ');
+    s.className='px-star '+t.join(' ');
+    s.style.left=Math.random()*100+'%';s.style.top=Math.random()*72+'%';
+    s.style.animationDelay=Math.random()*5+'s';s.style.animationDuration=(1+Math.random()*3)+'s';
+    sky.appendChild(s);
+  }
+  for(let i=0;i<5;i++){
+    const ss=document.createElement('div');ss.className='shoot';
+    ss.style.top=(4+Math.random()*38)+'%';ss.style.left=(8+Math.random()*50)+'%';
+    ss.style.animationDelay=(i*4.5+Math.random()*3)+'s';ss.style.animationDuration=(9+Math.random()*7)+'s';
+    sky.appendChild(ss);
+  }
+})();
+
+// Intro trees
+(function(){
+  const lC=document.getElementById('intro-trees-left');
+  const rC=document.getElementById('intro-trees-right');
+  const cols=['#0e1e06','#162a08','#1e380a','#0a1604','#1e2c08'];
+  function mkTree(c,idx){
+    const ns='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(ns,'svg');
+    const W=38+idx*9+Math.random()*14,H=110+idx*22+Math.random()*80;
+    const col=cols[Math.floor(Math.random()*cols.length)];
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('width',W);svg.setAttribute('height',H);
+    svg.style.cssText='display:block;image-rendering:pixelated;';svg.style.opacity=(0.55+Math.random()*0.45).toFixed(2);
+    const tw=Math.round(W*0.2),tx=Math.round((W-tw)/2);
+    for(let row=0;row<Math.round(H*0.5);row+=4){
+      const r=document.createElementNS(ns,'rect');
+      r.setAttribute('x',tx+(row%8<4?0:2));r.setAttribute('y',Math.round(H*0.48)+row);
+      r.setAttribute('width',tw-(row%8<4?0:2));r.setAttribute('height',4);
+      r.setAttribute('fill',row%8<4?'#0a1604':'#0e1e08');svg.appendChild(r);
+    }
+    const layers=4+Math.floor(Math.random()*3);
+    for(let l=0;l<layers;l++){
+      const lw=Math.round(W*(0.94-l*0.12)),lh=Math.round(H*0.14);
+      const lx=Math.round((W-lw)/2),ly=Math.round(H*(0.08+l*0.1));
+      for(let px=0;px<lw;px+=4){
+        const r2=document.createElementNS(ns,'rect');
+        r2.setAttribute('x',lx+px);r2.setAttribute('y',ly+Math.round((px/lw)*4));
+        r2.setAttribute('width',4);r2.setAttribute('height',lh-Math.round((px/lw)*8));
+        r2.setAttribute('fill',l%2===0?col:cols[(cols.indexOf(col)+1)%cols.length]);
+        svg.appendChild(r2);
+      }
+      const hl=document.createElementNS(ns,'rect');
+      hl.setAttribute('x',lx+4);hl.setAttribute('y',ly);hl.setAttribute('width',lw-8);hl.setAttribute('height',2);
+      hl.setAttribute('fill','#2a4418');hl.setAttribute('opacity','0.5');svg.appendChild(hl);
+    }
+    c.appendChild(svg);
+  }
+  for(let i=0;i<7;i++)mkTree(lC,i);
+  for(let i=0;i<7;i++)mkTree(rC,i);
+})();
+
+// Fireflies
+(function(){
+  const intro=document.getElementById('intro-screen');
+  const types=['green','purple','green','teal','purple','gold','green'];
+  for(let i=0;i<36;i++){
+    const f=document.createElement('div');f.className='firefly '+types[i%types.length];
+    f.style.left=Math.random()*100+'%';f.style.bottom=Math.random()*38+'%';
+    f.style.animationDuration=(5+Math.random()*10)+'s';f.style.animationDelay=(-Math.random()*14)+'s';
+    intro.appendChild(f);
+  }
+})();
+
+// PIXEL DECORATIONS — intro sides
+(function(){
+  const lc=document.getElementById('deco-left');
+  const rc=document.getElementById('deco-right');
+  const intro=document.getElementById('intro-screen');
+
+  const leftList=[
+    {cls:'px-mushroom',svg:PX.mushroom('#d050d0','#ffffff'),x:12,y:'70%'},
+    {cls:'px-mushroom',svg:PX.mushroom('#48b848','#d0ffd0',28,34),x:52,y:'76%'},
+    {cls:'px-mushroom',svg:PX.mushroom('#e04040','#ffffff',42,52),x:5,y:'80%'},
+    {cls:'px-flower',  svg:PX.flower('#f068c8','#f0e050'),x:10,y:'65%'},
+    {cls:'px-flower',  svg:PX.flower('#80cc80','#f0e050',24,30),x:76,y:'72%'},
+    {cls:'px-flower',  svg:PX.flower('#c090f0','#ffdd60',34,42),x:130,y:'68%'},
+    {cls:'px-crystal', svg:PX.crystal('#90a0f0','#c0d8ff'),x:150,y:'58%'},
+    {cls:'px-crystal', svg:PX.crystal('#a050e0','#d090ff',18,34),x:28,y:'55%'},
+    {cls:'px-crystal', svg:PX.crystal('#50d0a0','#b0ffe0',16,30),x:90,y:'50%'},
+    {cls:'px-butterfly',svg:PX.butterfly('#c058d0','#58c060'),x:100,y:'46%'},
+    {cls:'px-sparkle', svg:PX.smallStar('#d080f0'),x:170,y:'40%'},
+    {cls:'px-sparkle', svg:PX.smallStar('#70e070'),x:50,y:'42%'},
+    {cls:'px-sparkle', svg:PX.heart('#f04060',16,14),x:200,y:'60%'},
+    {cls:'px-snail',   svg:PX.snail(),x:30,y:'85%'},
+    {cls:'px-frog',    svg:PX.frog(),x:120,y:'82%'},
+    {cls:'px-mushroom',svg:PX.mushroom('#5090d0','#c0e0ff',30,38),x:190,y:'73%'},
+    {cls:'px-flower',  svg:PX.flower('#f0a040','#ff8090',22,28),x:220,y:'66%'},
+    {cls:'px-sparkle', svg:PX.lantern('#f0c030',20,30),x:240,y:'52%'},
+    {cls:'px-berry',   svg:PX.berry('#d030a0'),x:70,y:'60%'},
+    {cls:'px-berry',   svg:PX.berry('#4090f0',14,18),x:200,y:'78%'},
+  ];
+  const rightList=[
+    {cls:'px-mushroom',svg:PX.mushroom('#a040c0','#f0c0ff'),x:8,y:'72%'},
+    {cls:'px-mushroom',svg:PX.mushroom('#38a038','#c0ffc0',32,40),x:160,y:'76%'},
+    {cls:'px-mushroom',svg:PX.mushroom('#d08000','#fff4b0',26,32),x:80,y:'80%'},
+    {cls:'px-flower',  svg:PX.flower('#a060d0','#f0e050'),x:140,y:'66%'},
+    {cls:'px-flower',  svg:PX.flower('#58c080','#f0d0ff',26,32),x:58,y:'70%'},
+    {cls:'px-flower',  svg:PX.flower('#f08040','#c0f040',20,26),x:10,y:'62%'},
+    {cls:'px-crystal', svg:PX.crystal('#58d8a0','#b0ffd8'),x:40,y:'57%'},
+    {cls:'px-crystal', svg:PX.crystal('#d860a0','#ffc0e0',20,38),x:180,y:'52%'},
+    {cls:'px-butterfly',svg:PX.butterfly('#80b8f0','#e080d0'),x:80,y:'48%'},
+    {cls:'px-sparkle', svg:PX.smallStar('#60d0f0'),x:20,y:'38%'},
+    {cls:'px-sparkle', svg:PX.smallStar('#f0a060'),x:148,y:'43%'},
+    {cls:'px-sparkle', svg:PX.heart('#8040e0',16,14),x:200,y:'58%'},
+    {cls:'px-snail',   svg:PX.snail(),x:100,y:'84%'},
+    {cls:'px-frog',    svg:PX.frog(),x:30,y:'79%'},
+    {cls:'px-flower',  svg:PX.flower('#f0c050','#ff8080',26,32),x:190,y:'68%'},
+    {cls:'px-mushroom',svg:PX.mushroom('#5080d0','#c0e0ff',28,36),x:240,y:'74%'},
+    {cls:'px-sparkle', svg:PX.lantern('#e0b020',18,28),x:120,y:'54%'},
+    {cls:'px-berry',   svg:PX.berry('#30c070'),x:200,y:'76%'},
+    {cls:'px-crystal', svg:PX.crystal('#f060c0','#ffc0e0',14,26),x:60,y:'44%'},
+    {cls:'px-leaf',    svg:PX.leaf('#5aaa30'),x:220,y:'62%'},
+  ];
+
+  function place(container,item){
+    const el=document.createElement('div');el.className=item.cls;
+    el.style.cssText=`position:absolute;left:${item.x}px;top:${item.y};animation-delay:${(Math.random()*4).toFixed(1)}s;`;
+    el.innerHTML=item.svg;container.appendChild(el);
+  }
+  leftList.forEach(d=>place(lc,d));
+  rightList.forEach(d=>place(rc,d));
+
+  // scatter sparkle stars all over sky
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div');el.className='px-sparkle';
+    el.style.cssText=`position:absolute;left:${Math.random()*100}%;top:${Math.random()*78}%;z-index:5;animation-delay:${(Math.random()*5).toFixed(1)}s;`;
+    const c=Math.random()>0.5?'#c060d0':'#60c060';
+    el.innerHTML=PX.smallStar(c,14,14);
+    intro.appendChild(el);
+  }
+  // birds flying across sky
+  for(let i=0;i<2;i++){
+    const el=document.createElement('div');el.className='px-bird-fly';
+    el.style.cssText=`position:absolute;top:${(10+i*20)}%;left:-60px;z-index:4;animation-delay:${i*6}s;animation-duration:${14+i*4}s;`;
+    el.innerHTML=PX.owl(24,30);
+    intro.appendChild(el);
+  }
+})();
+
+// Curtain tiles
+(function(){
+  const c=document.getElementById('curtain');
+  for(let i=0;i<16;i++){const t=document.createElement('div');t.className='curtain-tile';t.id='ct-'+i;c.appendChild(t);}
+})();
+
+// Build quiz side pixel trees + decorations
+(function buildQuizDecos(){
+  // Side trees
+  ['quiz-deco-left','quiz-deco-right'].forEach(id=>{
+    const c=document.getElementById(id);
+    const ns='http://www.w3.org/2000/svg';
+    for(let t=0;t<10;t++){
+      const svg=document.createElementNS(ns,'svg');
+      const w=20+Math.random()*22,h=55+Math.random()*110;
+      svg.setAttribute('viewBox',`0 0 ${w} ${h}`);svg.setAttribute('width',w);svg.setAttribute('height',h);
+      svg.style.cssText='display:block;image-rendering:pixelated;opacity:0.32;';
+      const tr=document.createElementNS(ns,'rect');const tw=Math.round(w*0.2);
+      tr.setAttribute('x',Math.round(w/2-tw/2));tr.setAttribute('y',Math.round(h*0.5));
+      tr.setAttribute('width',tw);tr.setAttribute('height',Math.round(h*0.5));tr.setAttribute('fill','#2a4418');
+      svg.appendChild(tr);
+      for(let l=0;l<4;l++){
+        const lw=Math.round(w*(0.9-l*0.18)),lh=Math.round(h*0.16);
+        const r=document.createElementNS(ns,'rect');
+        r.setAttribute('x',Math.round((w-lw)/2));r.setAttribute('y',Math.round(h*(0.08+l*0.11)));
+        r.setAttribute('width',lw);r.setAttribute('height',lh);r.setAttribute('fill','#2a4a18');
+        svg.appendChild(r);
+      }
+      c.appendChild(svg);
+    }
+  });
+
+  // Floating ambient quiz decos (mushrooms, crystals, butterflies scattered around screen edges)
+  const quizBody=document.getElementById('quiz-body');
+  const ambientDecos=[
+    {svg:PX.mushroom('#c050c0','#ffffff',28,34),  left:'2%', top:'15%', anim:'px-mushroom'},
+    {svg:PX.mushroom('#40a040','#d0ffd0',22,28),  left:'3%', top:'55%', anim:'px-mushroom'},
+    {svg:PX.flower('#f070c0','#f0e050',24,30),    left:'1%', top:'35%', anim:'px-flower'},
+    {svg:PX.crystal('#90a0f0','#c0d8ff',18,32),   left:'2%', top:'70%', anim:'px-crystal'},
+    {svg:PX.butterfly('#c060d0','#60c070',34,24), left:'4%', top:'45%', anim:'px-butterfly'},
+    {svg:PX.smallStar('#d080f0',16,16),           left:'1%', top:'25%', anim:'px-sparkle'},
+    {svg:PX.leaf('#4a8a28',22,26),                left:'3%', top:'80%', anim:'px-flower'},
+    {svg:PX.mushroom('#5080d0','#c0e0ff',24,30),  right:'2%',top:'20%', anim:'px-mushroom'},
+    {svg:PX.mushroom('#d06020','#fff0c0',20,24),  right:'3%',top:'60%', anim:'px-mushroom'},
+    {svg:PX.flower('#80c080','#fff060',22,28),    right:'2%',top:'40%', anim:'px-flower'},
+    {svg:PX.crystal('#60d0a0','#b0ffe0',16,28),   right:'1%',top:'75%', anim:'px-crystal'},
+    {svg:PX.butterfly('#80b8f0','#f080c0',32,22), right:'4%',top:'50%', anim:'px-butterfly'},
+    {svg:PX.smallStar('#60e080',16,16),           right:'2%',top:'30%', anim:'px-sparkle'},
+    {svg:PX.berry('#e030a0'),                     right:'3%',top:'85%', anim:'px-flower'},
+  ];
+  ambientDecos.forEach((d,i)=>{
+    const el=document.createElement('div');
+    el.className='quiz-ambient '+d.anim;
+    const styles=`animation-delay:${(i*0.4).toFixed(1)}s;`;
+    if(d.left)  el.style.left=d.left;
+    if(d.right) el.style.right=d.right;
+    el.style.top=d.top;
+    el.style.cssText+='position:fixed;pointer-events:none;z-index:4;image-rendering:pixelated;';
+    if(d.left)  el.style.left=d.left;
+    if(d.right) el.style.right=d.right;
+    el.style.top=d.top;
+    el.style.animationDelay=(i*0.4).toFixed(1)+'s';
+    el.innerHTML=d.svg;
+    quizBody.appendChild(el);
+  });
+})();
+
+/* ════════════════════════════════════════════
+   ENTER GROVE
+════════════════════════════════════════════ */
+function enterGrove(){
+  sounds.enter();
+  const tiles=document.querySelectorAll('.curtain-tile');
+  tiles.forEach((t,i)=>setTimeout(()=>t.classList.add('drop'),i*28));
+  setTimeout(()=>{
+    clearInterval(introSpriteTimer);
+    document.getElementById('intro-screen').classList.add('hidden');
+    document.getElementById('quiz-body').classList.add('active');
+    document.body.classList.add('theme-skyonix');
+    setTimeout(()=>{
+      tiles.forEach((t,i)=>{
+        t.style.transformOrigin='bottom';
+        setTimeout(()=>{t.classList.remove('drop');t.classList.add('lift');},i*22);
+      });
+    },200);
+    showScene();
+  },600);
+}
+
+/* ════════════════════════════════════════════
+   STATE & QUIZ ENGINE
+════════════════════════════════════════════ */
+let currentScene=0,skyFrame=0,pexFrame=0,spriteTimer=null;
+
+function setTheme(who){
+  document.body.classList.remove('theme-skyonix','theme-pexxelina');
+  document.body.classList.add(who==='pexxelina'?'theme-pexxelina':'theme-skyonix');
+}
+
+function renderSprite(scene,imageDiv){
+  clearInterval(spriteTimer);imageDiv.innerHTML="";
+  setTheme(scene.sprite||'skyonix');
+  if(!scene.sprite)return;
+  if(scene.sprite==="both"){
+    const dual=document.createElement("div");dual.className="dual-sprite";
+    const wS=document.createElement("div");wS.className="sprite-wrap";wS.innerHTML=PX.skyonix(0);
+    const wP=document.createElement("div");wP.className="sprite-wrap delay";wP.innerHTML=PX.pexxelina(0);
+    dual.appendChild(wS);dual.appendChild(wP);imageDiv.appendChild(dual);
+    if(scene.fadeIn){dual.classList.add("fade-in");setTimeout(()=>dual.classList.add("show"),10);}
+    spriteTimer=setInterval(()=>{skyFrame^=1;pexFrame^=1;wS.innerHTML=PX.skyonix(skyFrame);wP.innerHTML=PX.pexxelina(pexFrame);},650);
+  } else if(scene.sprite==="skyonix"){
+    const w=document.createElement("div");w.className="sprite-wrap";w.innerHTML=PX.skyonix(0);
+    if(scene.fadeIn){w.classList.add("fade-in");setTimeout(()=>w.classList.add("show"),10);}
+    imageDiv.appendChild(w);
+    spriteTimer=setInterval(()=>{skyFrame^=1;w.innerHTML=PX.skyonix(skyFrame);},650);
+  } else if(scene.sprite==="pexxelina"){
+    const w=document.createElement("div");w.className="sprite-wrap";w.innerHTML=PX.pexxelina(0);
+    if(scene.fadeIn){w.classList.add("fade-in");setTimeout(()=>w.classList.add("show"),10);}
+    imageDiv.appendChild(w);
+    spriteTimer=setInterval(()=>{pexFrame^=1;w.innerHTML=PX.pexxelina(pexFrame);},650);
+  }
+}
+
+function showScene(){
+  const scene=scenes[currentScene];
+  const textBox=document.getElementById("text-box");
+  const buttonsDiv=document.getElementById("buttons");
+  const imageDiv=document.getElementById("image");
+  textBox.classList.remove("title-font","question-font","dialogue-scene","results-active");
+  buttonsDiv.innerHTML="";
+  renderSprite(scene,imageDiv);
+  if(scene.isTitle) textBox.classList.add("title-font");
+  else if(scene.type==="question") textBox.classList.add("question-font");
+  else if(!scene.isCreatorNote) textBox.classList.add("dialogue-scene");
+  let spkHTML="";
+  if(scene.speaker==="Skyonix") spkHTML='<span class="speaker-tag skyonix">Skyonix</span><br>';
+  else if(scene.speaker==="Pexxelina") spkHTML='<span class="speaker-tag pexxelina">Pexxelina</span><br>';
+  if(scene.isCreatorNote) textBox.innerHTML=`<div class="creator-note">${scene.text}</div>`;
+  else if(scene.isTitle) textBox.textContent=scene.text;
+  else textBox.innerHTML=spkHTML+scene.text;
+  if(scene.type==="dialogue"){
+    const btn=document.createElement("button");btn.textContent=scene.buttonText||"Next";
+    btn.classList.add("dialogue-btn");
+    btn.onclick=()=>{if(scene.sound&&sounds[scene.sound])sounds[scene.sound]();currentScene++;showScene();};
+    buttonsDiv.appendChild(btn);
+  } else if(scene.type==="question"){
+    scene.options.forEach(opt=>{
+      const btn=document.createElement("button");btn.textContent=opt.text;btn.classList.add("question-btn");
+      btn.onclick=()=>{sounds.select();opt.cats.forEach(c=>{if(scores[c]!==undefined)scores[c]++;});currentScene++;
+        if(currentScene>=scenes.length)showResult();else showScene();};
       buttonsDiv.appendChild(btn);
     });
   }
 }
 
-/* ============================================================
-   SHOW RESULT
-============================================================ */
-function showResult() {
-  clearInterval(spriteTimer);
-  sounds.fanfare();
-
-  const textBox    = document.getElementById("text-box");
-  const container  = document.getElementById("container");
-  const buttonsDiv = document.getElementById("buttons");
-  const imageDiv   = document.getElementById("image");
-  const overlay    = document.getElementById("overlay");
-
+function showResult(){
+  clearInterval(spriteTimer);sounds.fanfare();
+  const textBox=document.getElementById("text-box"),container=document.getElementById("container"),
+        buttonsDiv=document.getElementById("buttons"),imageDiv=document.getElementById("image"),
+        overlay=document.getElementById("overlay");
   textBox.classList.remove("title-font","question-font","dialogue-scene");
-  textBox.classList.add("results-active");
-  container.classList.add("results-active");
-  overlay.style.opacity = 1;
-  imageDiv.innerHTML = "";
-  buttonsDiv.innerHTML = "";
-
-  // Top result
-  const top  = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b);
-  const data = resultData[top];
-  const isSky = data.owner === "skyonix";
-
-  // Theme matches the character who reveals the result
-  setTheme(isSky ? 'skyonix' : 'pexxelina');
-
-  textBox.textContent = `Your intellectual personality is ... the ${data.name}!`;
-
-  // Show the character who "owns" this result
-  const resultSprite = document.createElement("div");
-  resultSprite.className = "sprite-wrap";
-  resultSprite.innerHTML = isSky ? skyonixSVG(1) : pexxelinaSVG(1);
-  resultSprite.style.marginBottom = "6px";
-  imageDiv.appendChild(resultSprite);
-  spriteTimer = setInterval(() => {
-    if (isSky) { skyFrame ^= 1; resultSprite.innerHTML = skyonixSVG(skyFrame); }
-    else        { pexFrame ^= 1; resultSprite.innerHTML = pexxelinaSVG(pexFrame); }
-  }, 650);
-
-  // Owner label
-  const ownerEl = document.createElement("p");
-  ownerEl.style.cssText = `font-size:0.75em;margin-bottom:14px;color:${isSky?"#3a7a2a":"#8a4a9a"};font-family:'Space Mono',monospace;`;
-  ownerEl.textContent = isSky ? "✦ Revealed by Skyonix" : "✦ Revealed by Pexxelina";
-  buttonsDiv.appendChild(ownerEl);
-
-  // Big icon
-  const iconEl = document.createElement("span");
-  iconEl.className = "result-icon-display";
-  iconEl.textContent = data.icon;
-  buttonsDiv.appendChild(iconEl);
-
-  // Subtitle
-  const subEl = document.createElement("p");
-  subEl.style.cssText = "font-size:1.05em;color:#1a2a10;max-width:500px;margin:0 auto 10px;line-height:1.7;font-style:italic;";
-  subEl.textContent = `"${data.subtitle}"`;
-  buttonsDiv.appendChild(subEl);
-
-  // Description
-  const descEl = document.createElement("p");
-  descEl.style.cssText = "font-size:0.92em;color:#2a3a1a;max-width:500px;margin:0 auto 12px;line-height:1.8;";
-  descEl.textContent = data.desc;
-  buttonsDiv.appendChild(descEl);
-
-  // Trait
-  const traitEl = document.createElement("p");
-  traitEl.style.cssText = "font-size:0.8em;color:#4a7a2a;margin-bottom:26px;letter-spacing:1px;";
-  traitEl.textContent = data.trait;
-  buttonsDiv.appendChild(traitEl);
-
-  // ── Share button ──
-  const shareBtn = document.createElement("button");
-  shareBtn.textContent = "✦ Share My Result";
-  shareBtn.style.cssText = "background:#4a7a2a;border-color:#4a7a2a;margin-bottom:10px;";
-  shareBtn.onclick = () => { sounds.chime(); openShareCard(data, isSky); };
-  buttonsDiv.appendChild(shareBtn);
-
-  // Back to Home
-  const homeBtn = document.createElement("button");
-  homeBtn.textContent = "Back to Home";
-  homeBtn.onclick = () => {
-    sounds.blip();
-    clearInterval(spriteTimer);
-    overlay.style.opacity = 0;
-    textBox.classList.remove("results-active");
-    container.classList.remove("results-active");
-    imageDiv.innerHTML = "";
-    Object.keys(scores).forEach(k => scores[k] = 0);
-    currentScene = 0; skyFrame = 0; pexFrame = 0;
-    showScene();
-  };
+  textBox.classList.add("results-active");container.classList.add("results-active");
+  overlay.style.opacity=1;imageDiv.innerHTML="";buttonsDiv.innerHTML="";
+  const top=Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
+  const data=resultData[top];const isSky=data.owner==="skyonix";
+  setTheme(isSky?'skyonix':'pexxelina');
+  textBox.textContent=`Your intellectual personality is ... the ${data.name}!`;
+  const rs=document.createElement("div");rs.className="sprite-wrap";rs.innerHTML=isSky?PX.skyonix(1):PX.pexxelina(1);
+  rs.style.marginBottom="6px";imageDiv.appendChild(rs);
+  spriteTimer=setInterval(()=>{if(isSky){skyFrame^=1;rs.innerHTML=PX.skyonix(skyFrame);}else{pexFrame^=1;rs.innerHTML=PX.pexxelina(pexFrame);}},650);
+  const ownerEl=document.createElement("p");
+  ownerEl.style.cssText=`font-size:0.75em;margin-bottom:14px;color:${isSky?"#3a7a2a":"#8a4a9a"};font-family:'Space Mono',monospace;`;
+  ownerEl.textContent=isSky?"✦ Revealed by Skyonix":"✦ Revealed by Pexxelina";buttonsDiv.appendChild(ownerEl);
+  // Big pixel icon
+  const iconEl=document.createElement("div");iconEl.className="result-icon-display";
+  iconEl.innerHTML=PX[data.iconKey]();buttonsDiv.appendChild(iconEl);
+  const subEl=document.createElement("p");subEl.style.cssText="font-size:1.05em;color:#1a2a10;max-width:500px;margin:0 auto 10px;line-height:1.7;font-style:italic;";
+  subEl.textContent=`"${data.subtitle}"`;buttonsDiv.appendChild(subEl);
+  const descEl=document.createElement("p");descEl.style.cssText="font-size:0.92em;color:#2a3a1a;max-width:500px;margin:0 auto 12px;line-height:1.8;";
+  descEl.textContent=data.desc;buttonsDiv.appendChild(descEl);
+  const traitEl=document.createElement("p");traitEl.style.cssText="font-size:0.8em;color:#4a7a2a;margin-bottom:26px;letter-spacing:1px;";
+  traitEl.textContent=data.trait;buttonsDiv.appendChild(traitEl);
+  const shareBtn=document.createElement("button");shareBtn.textContent="Share My Result";shareBtn.style.background="#4a7a2a";
+  shareBtn.onclick=()=>{sounds.chime();openShareCard(data,isSky);};buttonsDiv.appendChild(shareBtn);
+  const homeBtn=document.createElement("button");homeBtn.textContent="Back to Home";
+  homeBtn.onclick=()=>{sounds.blip();clearInterval(spriteTimer);overlay.style.opacity=0;textBox.classList.remove("results-active");container.classList.remove("results-active");imageDiv.innerHTML="";Object.keys(scores).forEach(k=>scores[k]=0);currentScene=0;skyFrame=0;pexFrame=0;showScene();};
   buttonsDiv.appendChild(homeBtn);
-
-  const exploreBtn = document.createElement("button");
-  exploreBtn.textContent = "Explore All Personalities";
-  exploreBtn.onclick = () => { sounds.blip(); showGallery(); };
-  buttonsDiv.appendChild(exploreBtn);
+  const expBtn=document.createElement("button");expBtn.textContent="Explore All Personalities";
+  expBtn.onclick=()=>{sounds.blip();showGallery();};buttonsDiv.appendChild(expBtn);
 }
 
-/* ============================================================
-   SHARE CARD
-============================================================ */
-function openShareCard(data, isSky) {
-  // Populate card
-  document.getElementById("sc-icon").textContent    = data.icon;
-  document.getElementById("sc-name").textContent    = data.name;
-  document.getElementById("sc-subtitle").textContent= data.subtitle;
-  document.getElementById("sc-trait").textContent   = data.trait;
-  document.getElementById("sc-owner").textContent   = isSky ? "✦ Revealed by Skyonix" : "✦ Revealed by Pexxelina";
-  document.getElementById("sc-owner").style.color   = isSky ? "#6aaa3a" : "#c080d8";
-
-  // Spawn floating pixel dots
-  const dotsEl = document.getElementById("sc-dots");
-  dotsEl.innerHTML = "";
-  const dotColors = isSky
-    ? ["#3a6020","#4a8a28","#5aaa30","#7ec850","#c9a84c"]
-    : ["#6030a0","#8040c0","#c060d0","#e080e0","#c9a84c"];
-  for (let i = 0; i < 14; i++) {
-    const d = document.createElement("div");
-    d.className = "sc-dot";
-    const sz = [4,6,4,8][i%4];
-    d.style.cssText = `
-      width:${sz}px; height:${sz}px;
-      background:${dotColors[i%dotColors.length]};
-      left:${Math.random()*95}%;
-      bottom:${Math.random()*30}%;
-      animation-duration:${3+Math.random()*4}s;
-      animation-delay:${-Math.random()*5}s;
-    `;
+/* SHARE CARD */
+function openShareCard(data,isSky){
+  const scIcon=document.getElementById("sc-icon");scIcon.innerHTML=PX[data.iconKey]();
+  document.getElementById("sc-name").textContent=data.name;
+  document.getElementById("sc-subtitle").textContent=data.subtitle;
+  document.getElementById("sc-trait").textContent=data.trait;
+  document.getElementById("sc-owner").textContent=isSky?"✦ Revealed by Skyonix":"✦ Revealed by Pexxelina";
+  document.getElementById("sc-owner").style.color=isSky?"#6aaa3a":"#c080d8";
+  const dotsEl=document.getElementById("sc-dots");dotsEl.innerHTML="";
+  const dc=isSky?["#3a6020","#4a8a28","#5aaa30","#7ec850","#c9a84c"]:["#6030a0","#8040c0","#c060d0","#e080e0","#c9a84c"];
+  for(let i=0;i<14;i++){
+    const d=document.createElement("div");d.className="sc-dot";const sz=[4,6,4,8][i%4];
+    d.style.cssText=`width:${sz}px;height:${sz}px;background:${dc[i%dc.length]};left:${Math.random()*95}%;bottom:${Math.random()*30}%;animation-duration:${3+Math.random()*4}s;animation-delay:${-Math.random()*5}s;border-radius:0;image-rendering:pixelated;`;
     dotsEl.appendChild(d);
   }
-
-  // Change card accent colour for Pexxelina results
-  const card = document.getElementById("share-card");
-  if (isSky) {
-    card.style.background = "linear-gradient(135deg,#1a2e0e 0%,#2a4a18 50%,#1a2e0e 100%)";
-    card.style.borderColor = "#6aaa3a";
-    card.style.boxShadow   = "0 0 40px rgba(106,170,58,0.3),0 8px 32px rgba(0,0,0,0.6)";
-    document.querySelector(".sc-grove").style.color = "#6aaa3a";
-    document.querySelector(".sc-name").style.color  = "#c8f090";
-    document.querySelector(".sc-trait").style.color = "#5a9a3a";
-  } else {
-    card.style.background = "linear-gradient(135deg,#1a0a2e 0%,#2e1a48 50%,#1a0a2e 100%)";
-    card.style.borderColor = "#c060d0";
-    card.style.boxShadow   = "0 0 40px rgba(192,96,208,0.3),0 8px 32px rgba(0,0,0,0.6)";
-    document.querySelector(".sc-grove").style.color = "#c060d0";
-    document.querySelector(".sc-name").style.color  = "#f0c0ff";
-    document.querySelector(".sc-trait").style.color = "#9a60c0";
-  }
-
+  const card=document.getElementById("share-card");
+  if(isSky){card.style.background="linear-gradient(135deg,#1a2e0e,#2a4a18,#1a2e0e)";card.style.borderColor="#6aaa3a";card.style.boxShadow="8px 8px 0 #0a1608, 0 0 40px rgba(106,170,58,0.3)";document.querySelector(".sc-grove").style.color="#6aaa3a";document.querySelector(".sc-name").style.color="#c8f090";document.querySelector(".sc-trait").style.color="#5a9a3a";}
+  else{card.style.background="linear-gradient(135deg,#1a0a2e,#2e1a48,#1a0a2e)";card.style.borderColor="#c060d0";card.style.boxShadow="8px 8px 0 #0a0414, 0 0 40px rgba(192,96,208,0.3)";document.querySelector(".sc-grove").style.color="#c060d0";document.querySelector(".sc-name").style.color="#f0c0ff";document.querySelector(".sc-trait").style.color="#9a60c0";}
   document.getElementById("share-modal").classList.add("open");
 }
+function closeShareCard(){document.getElementById("share-modal").classList.remove("open");}
+function showToast(msg){const t=document.getElementById("copy-toast");t.textContent=msg;t.style.display="block";setTimeout(()=>{t.style.display="none";},2200);}
+document.getElementById("close-share-btn").onclick=()=>{sounds.blip();closeShareCard();};
+document.getElementById("copy-link-btn").onclick=()=>{sounds.blip();const url=window.location.href.split("?")[0];navigator.clipboard.writeText(url).then(()=>showToast("✓ Link copied!")).catch(()=>prompt("Copy:",url));};
+document.getElementById("copy-text-btn").onclick=()=>{sounds.blip();const name=document.getElementById("sc-name").textContent,sub=document.getElementById("sc-subtitle").textContent,trait=document.getElementById("sc-trait").textContent,owner=document.getElementById("sc-owner").textContent;const text=`✦ THE GROVE Quiz ✦\n\nMy result: ${name}\n"${sub}"\n\n${trait}\n\n${owner}\n\nTake the quiz: ${window.location.href.split("?")[0]}`;navigator.clipboard.writeText(text).then(()=>showToast("✓ Copied!")).catch(()=>prompt("Copy:",text));};
+document.getElementById("share-modal").addEventListener("click",(e)=>{if(e.target===document.getElementById("share-modal")){sounds.blip();closeShareCard();}});
 
-function closeShareCard() {
-  document.getElementById("share-modal").classList.remove("open");
-}
-
-function showToast(msg) {
-  const t = document.getElementById("copy-toast");
-  t.textContent = msg;
-  t.style.display = "block";
-  setTimeout(() => { t.style.display = "none"; }, 2200);
-}
-
-// Wire up share modal buttons
-document.getElementById("close-share-btn").onclick = () => { sounds.blip(); closeShareCard(); };
-
-document.getElementById("copy-link-btn").onclick = () => {
-  sounds.blip();
-  const url = window.location.href.split("?")[0];
-  navigator.clipboard.writeText(url).then(() => showToast("✓ Link copied!")).catch(() => {
-    prompt("Copy this link:", url);
-  });
-};
-
-document.getElementById("copy-text-btn").onclick = () => {
-  sounds.blip();
-  const name    = document.getElementById("sc-name").textContent;
-  const sub     = document.getElementById("sc-subtitle").textContent;
-  const trait   = document.getElementById("sc-trait").textContent;
-  const owner   = document.getElementById("sc-owner").textContent;
-  const text    = `✦ THE GROVE — Intellectual Personality Quiz ✦\n\nMy result: ${name}\n"${sub}"\n\n${trait}\n\n${owner}\n\nTake the quiz: ${window.location.href.split("?")[0]}`;
-  navigator.clipboard.writeText(text).then(() => showToast("✓ Result text copied!")).catch(() => {
-    prompt("Copy this text:", text);
-  });
-};
-
-document.getElementById("share-modal").addEventListener("click", (e) => {
-  if (e.target === document.getElementById("share-modal")) { sounds.blip(); closeShareCard(); }
-});
-
-/* ============================================================
-   GALLERY
-============================================================ */
-function showGallery() {
+/* GALLERY */
+function showGallery(){
   clearInterval(spriteTimer);
-  const textBox    = document.getElementById("text-box");
-  const container  = document.getElementById("container");
-  const buttonsDiv = document.getElementById("buttons");
-  const imageDiv   = document.getElementById("image");
-  const overlay    = document.getElementById("overlay");
-
-  overlay.style.opacity = 0;
-  setTheme('skyonix');
-  container.classList.remove("results-active");
-  textBox.className = "title-font";
-  textBox.textContent = "All Twelve Personalities";
-  imageDiv.innerHTML = "";
-  buttonsDiv.innerHTML = "";
-
-  // Section: Skyonix fields
-  const skyLabel = document.createElement("p");
-  skyLabel.style.cssText = "font-size:0.8em;color:#3a7a2a;margin:0 auto 10px;font-family:'Space Mono',monospace;";
-  skyLabel.textContent = "✦ Skyonix's Paths — Life & Heart";
-  buttonsDiv.appendChild(skyLabel);
-
-  const skyGrid = document.createElement("div");
-  skyGrid.className = "result-gallery";
-  skyGrid.style.borderColor = "#4a7a2a";
-
-  // Section: Pexxelina fields
-  const pexLabel = document.createElement("p");
-  pexLabel.style.cssText = "font-size:0.8em;color:#8a4a9a;margin:16px auto 10px;font-family:'Space Mono',monospace;";
-  pexLabel.textContent = "✦ Pexxelina's Paths — Logic & Creation";
-  const pexGrid = document.createElement("div");
-  pexGrid.className = "result-gallery";
-  pexGrid.style.borderColor = "#9a5aaa";
-
-  Object.entries(resultData).forEach(([key, d]) => {
-    const card = document.createElement("div");
-    card.className = "result-card";
-    if (d.owner === "pexxelina") card.style.borderColor = "#9a5aaa";
-    card.innerHTML = `
-      <span class="card-icon">${d.icon}</span>
-      <div class="card-name">${d.name}</div>
-      <div class="card-trait">${d.trait}</div>
-    `;
-    if (d.owner === "skyonix") skyGrid.appendChild(card);
-    else pexGrid.appendChild(card);
+  const textBox=document.getElementById("text-box"),container=document.getElementById("container"),
+        buttonsDiv=document.getElementById("buttons"),imageDiv=document.getElementById("image"),
+        overlay=document.getElementById("overlay");
+  overlay.style.opacity=0;setTheme('skyonix');container.classList.remove("results-active");
+  textBox.className="title-font";textBox.textContent="All Twelve Personalities";
+  imageDiv.innerHTML="";buttonsDiv.innerHTML="";
+  const skyLabel=document.createElement("p");skyLabel.style.cssText="font-size:0.8em;color:#3a7a2a;margin:0 auto 10px;font-family:'Space Mono',monospace;";
+  skyLabel.textContent="✦ Skyonix's Paths — Life & Heart";buttonsDiv.appendChild(skyLabel);
+  const skyGrid=document.createElement("div");skyGrid.className="result-gallery";skyGrid.style.borderColor="#4a7a2a";
+  const pexLabel=document.createElement("p");pexLabel.style.cssText="font-size:0.8em;color:#8a4a9a;margin:16px auto 10px;font-family:'Space Mono',monospace;";
+  pexLabel.textContent="✦ Pexxelina's Paths — Logic & Creation";
+  const pexGrid=document.createElement("div");pexGrid.className="result-gallery";pexGrid.style.borderColor="#9a5aaa";
+  Object.entries(resultData).forEach(([key,d])=>{
+    const card=document.createElement("div");card.className="result-card";
+    if(d.owner==="pexxelina")card.style.borderColor="#9a5aaa";
+    const iconDiv=document.createElement("div");iconDiv.className="card-icon";iconDiv.innerHTML=PX[d.iconKey]();
+    card.appendChild(iconDiv);
+    card.innerHTML+=`<div class="card-name">${d.name}</div><div class="card-trait">${d.trait}</div>`;
+    if(d.owner==="skyonix")skyGrid.appendChild(card);else pexGrid.appendChild(card);
   });
-
-  buttonsDiv.appendChild(skyGrid);
-  buttonsDiv.appendChild(pexLabel);
-  buttonsDiv.appendChild(pexGrid);
-
-  const backBtn = document.createElement("button");
-  backBtn.textContent = "← Back to Home";
-  backBtn.onclick = () => {
-    sounds.blip();
-    Object.keys(scores).forEach(k => scores[k] = 0);
-    currentScene = 0; skyFrame = 0; pexFrame = 0;
-    textBox.className = "";
-    showScene();
-  };
-  buttonsDiv.appendChild(backBtn);
+  buttonsDiv.appendChild(skyGrid);buttonsDiv.appendChild(pexLabel);buttonsDiv.appendChild(pexGrid);
+  const back=document.createElement("button");back.textContent="Back to Home";
+  back.onclick=()=>{sounds.blip();Object.keys(scores).forEach(k=>scores[k]=0);currentScene=0;skyFrame=0;pexFrame=0;textBox.className="";showScene();};
+  buttonsDiv.appendChild(back);
 }
 
-/* ============================================================
-   INIT
-============================================================ */
-showScene();
-
-// Viewport height fix
-function setVh() {
-  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
-}
-window.addEventListener("resize", setVh);
-window.addEventListener("load", setVh);
-setVh();
+/* VIEWPORT */
+function setVh(){document.documentElement.style.setProperty("--vh",`${window.innerHeight*0.01}px`);}
+window.addEventListener("resize",setVh);window.addEventListener("load",setVh);setVh();
 </script>
 </body>
 </html>
