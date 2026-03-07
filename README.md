@@ -101,11 +101,11 @@ Open the site:
 **Skyonix**  
 github.com/SkyonixTheKing23  
 
-**Pexxelina**  
+**Pxxelina**  
 github.com/pxxelina  
 
 ---
 
 <p align="center">
-© 2026 Skyonix & Pexxelina
+© 2026 Skyonix & Pxxelina
 </p>
