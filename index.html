@@ -595,7 +595,174 @@ body.theme-pxxelina .result-count-badge{color:#c060d0;}
 #feedback-panel.fb-panel-sky .fb-msg-count{color:#3a6820;}
 #feedback-panel.fb-panel-sky .fb-msg-delete{border-color:rgba(80,180,40,0.35);color:rgba(80,180,40,0.55);}
 #feedback-panel.fb-panel-sky .fb-msg-delete:hover{background:rgba(60,160,20,0.2);border-color:rgba(100,200,50,0.8);color:#90e060;}
+
+/* ── SEND BUTTON WRAPPER ── */
+.fb-submit-wrap{
+  position:relative;
+  align-self:flex-start;
+}
+
+/* ── PIXEL DOT LOADING ANIMATION inside send button ── */
+.fb-send-dots{
+  display:none;
+  position:absolute;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  pointer-events:none;
+}
+.fb-send-dot{
+  width:5px;height:5px;
+  background:#e8d8ff;
+  image-rendering:pixelated;
+  animation:dotmarch 1s steps(1) infinite;
+  flex-shrink:0;
+}
+.fb-send-dot:nth-child(1){animation-delay:0s;}
+.fb-send-dot:nth-child(2){animation-delay:0.18s;}
+.fb-send-dot:nth-child(3){animation-delay:0.36s;}
+.fb-send-dot:nth-child(4){animation-delay:0.54s;}
+.fb-send-dot:nth-child(5){animation-delay:0.72s;}
+@keyframes dotmarch{
+  0%  {opacity:0.12;transform:scaleY(0.4);}
+  18% {opacity:1;   transform:scaleY(1.7);background:#f0d0ff;}
+  45% {opacity:0.5; transform:scaleY(1);}
+  100%{opacity:0.12;transform:scaleY(0.4);}
+}
+#feedback-panel.fb-panel-sky .fb-send-dot{background:#d0f090;}
+#feedback-panel.fb-panel-sky .fb-send-dot:nth-child(odd){background:#90e060;}
+#fb-btn-label{transition:opacity 0.1s;}
+
+/* ── SUCCESS SCREEN ── */
+.fb-success{
+  display:none;flex-direction:column;align-items:center;
+  gap:12px;padding:28px 20px 24px;text-align:center;
+  position:relative;z-index:2;
+}
+.fb-success.show{display:flex;}
+.fb-success-text{
+  font-family:'Press Start 2P',monospace;font-size:0.44em;
+  color:#c8a0ff;line-height:1.9;
+  transition:color 0.4s ease;
+}
+.fb-success-sub{
+  font-size:0.76em;color:rgba(160,110,220,0.65);
+  font-style:italic;letter-spacing:1px;
+  animation:fadein 0.6s ease 0.3s both;
+}
+#feedback-panel.fb-panel-sky .fb-success-text{color:#90e060;}
+#feedback-panel.fb-panel-sky .fb-success-sub{color:rgba(80,180,40,0.65);}
 </style>
+
+<!-- ═══════════════════════════════════
+     FIREBASE SETUP
+     ───────────────────────────────────
+     To make messages shared globally (GitHub Pages):
+     1. Go to https://console.firebase.google.com
+     2. Create a project → Firestore Database → Start in TEST mode
+     3. Project settings → Add Web App → copy firebaseConfig
+     4. Paste your values below replacing the PLACEHOLDERs
+     Until then, messages are saved locally in this browser only.
+═══════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+// ▼▼▼ PASTE YOUR FIREBASE CONFIG HERE ▼▼▼
+const _FIREBASE_CONFIG = {
+  apiKey:            "PASTE_YOUR_apiKey_HERE",
+  authDomain:        "PASTE_YOUR_authDomain_HERE",
+  projectId:         "PASTE_YOUR_projectId_HERE",
+  storageBucket:     "PASTE_YOUR_storageBucket_HERE",
+  messagingSenderId: "PASTE_YOUR_messagingSenderId_HERE",
+  appId:             "PASTE_YOUR_appId_HERE"
+};
+// ▲▲▲ PASTE YOUR FIREBASE CONFIG HERE ▲▲▲
+
+// Check if real config has been filled in
+const _FB_READY = Object.values(_FIREBASE_CONFIG).every(v => !v.startsWith('PASTE_'));
+
+if(_FB_READY){
+  firebase.initializeApp(_FIREBASE_CONFIG);
+  window._db = firebase.firestore();
+  window._DB_MODE = 'firebase';
+} else {
+  // ── LOCAL FALLBACK ── messages stored in localStorage, works right now ──
+  window._DB_MODE = 'local';
+  const _LS_MSGS = 'grove_messages_local';
+  const _LS_COUNTS = 'grove_counts_local';
+
+  window._db = {
+    collection(name){
+      return {
+        doc(id){
+          return {
+            async set(data){ // write
+              if(name === 'grove_messages'){
+                let msgs = JSON.parse(localStorage.getItem(_LS_MSGS)||'[]');
+                msgs = msgs.filter(m => m.id !== id);
+                msgs.unshift(data);
+                if(msgs.length > 200) msgs = msgs.slice(0,200);
+                localStorage.setItem(_LS_MSGS, JSON.stringify(msgs));
+              }
+            },
+            async delete(){ // delete
+              if(name === 'grove_messages'){
+                let msgs = JSON.parse(localStorage.getItem(_LS_MSGS)||'[]');
+                msgs = msgs.filter(m => m.id !== id);
+                localStorage.setItem(_LS_MSGS, JSON.stringify(msgs));
+              }
+            },
+            async get(){ // get single doc
+              if(name === 'grove_meta'){
+                const counts = JSON.parse(localStorage.getItem(_LS_COUNTS)||'{}');
+                return { exists: true, data(){ return counts; } };
+              }
+              return { exists: false, data(){ return null; } };
+            }
+          };
+        },
+        orderBy(){ return this; },
+        limit(){ return this; },
+        async get(){ // collection query
+          if(name === 'grove_messages'){
+            const msgs = JSON.parse(localStorage.getItem(_LS_MSGS)||'[]');
+            return { forEach(cb){ msgs.forEach(m => cb({ data(){ return m; } })); } };
+          }
+          return { forEach(){} };
+        },
+        async set(data, opts){ // collection-level set (for result counts)
+          if(name === 'grove_meta'){
+            let counts = JSON.parse(localStorage.getItem(_LS_COUNTS)||'{}');
+            if(opts && opts.merge){
+              Object.keys(data).forEach(k => {
+                const v = data[k];
+                if(v && v._increment) counts[k] = (counts[k]||0) + v._increment;
+                else counts[k] = (counts[k]||0) + 1;
+              });
+            } else {
+              counts = data;
+            }
+            localStorage.setItem(_LS_COUNTS, JSON.stringify(counts));
+          }
+        }
+      };
+    }
+  };
+
+  // Polyfill FieldValue.increment for local mode
+  if(typeof firebase !== 'undefined'){
+    if(!firebase.firestore) firebase.firestore = {};
+    if(!firebase.firestore.FieldValue){
+      firebase.firestore.FieldValue = {
+        increment(n){ return { _increment: n }; }
+      };
+    }
+  }
+
+  console.info('Grove: Firebase not configured — using local storage. Messages visible in this browser only.');
+}
+</script>
 </head>
 <body>
 <canvas id="pixel-canvas"></canvas>
@@ -683,10 +850,11 @@ body.theme-pxxelina .result-count-badge{color:#c060d0;}
     </div>
     <div class="fb-tabs">
       <button class="fb-tab active" id="fb-tab-write" onclick="switchFbTab('write')">&#9998; Leave a Message</button>
-      <button class="fb-tab" id="fb-tab-read"  onclick="switchFbTab('read')">&#9776; Read Messages</button>
+      <button class="fb-tab" id="fb-tab-read" onclick="switchFbTab('read')">&#9776; Read Messages</button>
     </div>
     <div class="fb-body" id="fb-body">
-      <!-- Write tab -->
+
+      <!-- WRITE TAB -->
       <div id="fb-write-pane" class="fb-write-area">
         <div>
           <div class="fb-label">Your name (or stay mysterious)</div>
@@ -695,11 +863,11 @@ body.theme-pxxelina .result-count-badge{color:#c060d0;}
         <div>
           <div class="fb-label">How did the Grove make you feel?</div>
           <div class="fb-mood" id="fb-mood-row">
-            <button class="fb-mood-btn" data-mood="loved"      onclick="selectMood(this)">loved it</button>
-            <button class="fb-mood-btn" data-mood="mindblown"  onclick="selectMood(this)">mind blown</button>
-            <button class="fb-mood-btn" data-mood="peaceful"   onclick="selectMood(this)">at peace</button>
-            <button class="fb-mood-btn" data-mood="thinking"   onclick="selectMood(this)">thinking...</button>
-            <button class="fb-mood-btn" data-mood="lost"       onclick="selectMood(this)">a bit lost</button>
+            <button class="fb-mood-btn" data-mood="loved"     onclick="selectMood(this)">loved it</button>
+            <button class="fb-mood-btn" data-mood="mindblown" onclick="selectMood(this)">mind blown</button>
+            <button class="fb-mood-btn" data-mood="peaceful"  onclick="selectMood(this)">at peace</button>
+            <button class="fb-mood-btn" data-mood="thinking"  onclick="selectMood(this)">thinking...</button>
+            <button class="fb-mood-btn" data-mood="lost"      onclick="selectMood(this)">a bit lost</button>
           </div>
         </div>
         <div>
@@ -707,31 +875,46 @@ body.theme-pxxelina .result-count-badge{color:#c060d0;}
           <textarea class="fb-textarea" id="fb-text" maxlength="280" placeholder="Leave a thought for other wanderers..." oninput="updateCharCount()"></textarea>
           <div class="fb-char-count" id="fb-char-count">0 / 280</div>
         </div>
-        <button class="fb-submit" id="fb-submit-btn" onclick="submitFeedback()">&#9658; Send to the Grove</button>
-        <div class="fb-success" id="fb-success">
-          <div class="fb-success-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="60" height="60" style="image-rendering:pixelated">
-              <rect x="20" y="4"  width="8"  height="40" fill="#c060f0" opacity="0.9"/>
-              <rect x="4"  y="20" width="40" height="8"  fill="#c060f0" opacity="0.9"/>
-              <rect x="8"  y="8"  width="8"  height="8"  fill="#9040c0"/>
-              <rect x="32" y="8"  width="8"  height="8"  fill="#9040c0"/>
-              <rect x="8"  y="32" width="8"  height="8"  fill="#9040c0"/>
-              <rect x="32" y="32" width="8"  height="8"  fill="#9040c0"/>
-              <rect x="18" y="18" width="12" height="12" fill="#f0d0ff"/>
-              <rect x="20" y="20" width="8"  height="8"  fill="#ffffff"/>
-            </svg>
-          </div>
-          <div class="fb-success-text">Your whisper has been<br>carried into the Grove.</div>
-          <button class="fb-submit" onclick="resetFeedbackForm()" style="font-size:0.38em">&#9658; Leave Another</button>
+        <div class="fb-submit-wrap">
+          <button class="fb-submit" id="fb-submit-btn" onclick="submitFeedback()">
+            <span id="fb-btn-label">&#9658; Send to the Grove</span>
+            <span class="fb-send-dots" id="fb-send-dots">
+              <span class="fb-send-dot"></span>
+              <span class="fb-send-dot"></span>
+              <span class="fb-send-dot"></span>
+              <span class="fb-send-dot"></span>
+              <span class="fb-send-dot"></span>
+            </span>
+          </button>
         </div>
       </div>
-      <!-- Read tab -->
+
+      <!-- SUCCESS SCREEN (replaces write pane content after send) -->
+      <div class="fb-success" id="fb-success">
+        <div class="fb-success-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="56" height="56" style="image-rendering:pixelated">
+            <rect x="20" y="4"  width="8"  height="40" fill="#c060f0" opacity="0.9"/>
+            <rect x="4"  y="20" width="40" height="8"  fill="#c060f0" opacity="0.9"/>
+            <rect x="8"  y="8"  width="8"  height="8"  fill="#9040c0"/>
+            <rect x="32" y="8"  width="8"  height="8"  fill="#9040c0"/>
+            <rect x="8"  y="32" width="8"  height="8"  fill="#9040c0"/>
+            <rect x="32" y="32" width="8"  height="8"  fill="#9040c0"/>
+            <rect x="18" y="18" width="12" height="12" fill="#f0d0ff"/>
+            <rect x="20" y="20" width="8"  height="8"  fill="#ffffff"/>
+          </svg>
+        </div>
+        <div class="fb-success-text">Whisper sent to the Grove.</div>
+        <div class="fb-success-sub">Opening messages in a moment...</div>
+      </div>
+
+      <!-- READ TAB -->
       <div id="fb-read-pane" style="display:none">
         <div class="fb-msg-count" id="fb-msg-count"></div>
         <div class="fb-loading" id="fb-loading">Loading whispers...</div>
         <div class="fb-messages-list" id="fb-messages-list"></div>
-        <div class="fb-empty" id="fb-empty" style="display:none">No messages yet.<br>Be the first to leave a whisper.</div>
+        <div class="fb-empty" id="fb-empty" style="display:none">No whispers yet.<br>Be the first to leave one.</div>
       </div>
+
     </div>
   </div>
 </div>
@@ -1539,23 +1722,20 @@ document.getElementById("copy-link-btn").onclick=()=>{sounds.blip();const url=wi
 document.getElementById("copy-text-btn").onclick=()=>{sounds.blip();const name=document.getElementById("sc-name").textContent,sub=document.getElementById("sc-subtitle").textContent,trait=document.getElementById("sc-trait").textContent,owner=document.getElementById("sc-owner").textContent;const text=`✦ THE GROVE Quiz ✦\n\nMy result: ${name}\n"${sub}"\n\n${trait}\n\n${owner}\n\nTake the quiz: ${window.location.href.split("?")[0]}`;navigator.clipboard.writeText(text).then(()=>showToast("✓ Copied!")).catch(()=>prompt("Copy:",text));};
 document.getElementById("share-modal").addEventListener("click",(e)=>{if(e.target===document.getElementById("share-modal")){sounds.blip();closeShareCard();}});
 
-/* GALLERY */
+/* GALLERY — Firebase */
 async function loadResultCounts(){
   try{
-    const data=await window.storage.get('grove_result_counts',true);
-    if(data&&data.value) return JSON.parse(data.value);
+    const snap = await window._db.collection('grove_meta').doc('result_counts').get();
+    if(snap.exists) return snap.data();
   }catch(e){}
   return {};
 }
 async function recordResultCount(key){
   try{
-    let counts={};
-    try{
-      const data=await window.storage.get('grove_result_counts',true);
-      if(data&&data.value) counts=JSON.parse(data.value);
-    }catch(e){}
-    counts[key]=(counts[key]||0)+1;
-    await window.storage.set('grove_result_counts',JSON.stringify(counts),true);
+    await window._db.collection('grove_meta').doc('result_counts').set(
+      { [key]: firebase.firestore.FieldValue.increment(1) },
+      { merge: true }
+    );
   }catch(e){}
 }
 
@@ -1606,36 +1786,26 @@ function setVh(){document.documentElement.style.setProperty("--vh",`${window.inn
 window.addEventListener("resize",setVh);window.addEventListener("load",setVh);setVh();
 
 /* ════════════════════════════════════════════
-   FEEDBACK SYSTEM
-   
-   Changes from original:
-   1. sessionTokens Set — tracks IDs of messages you sent THIS session
-   2. submitFeedback — after success, auto-switches to Read tab after 1.5s
-   3. loadMessages — shows delete button on cards you authored (by session token)
-   4. deleteMessage — removes message from shared storage
+   FEEDBACK SYSTEM — Firebase Firestore
+   Messages are stored globally, visible to all users on all devices.
+   Your own message IDs are saved to localStorage so the delete button
+   persists across tabs and page reloads on your device.
 ════════════════════════════════════════════ */
 
-/* Session tokens: message IDs sent by THIS user.
-   Saved to localStorage so delete access persists across tabs and page refreshes.
-   Only disappears if the user clears their browser data. */
 const SESSION_KEY = 'grove_my_message_ids';
 const sessionTokens = {
-  _load() {
-    try { return new Set(JSON.parse(localStorage.getItem(SESSION_KEY) || '[]')); }
-    catch(e) { return new Set(); }
-  },
-  _save(set) {
-    try { localStorage.setItem(SESSION_KEY, JSON.stringify([...set])); } catch(e) {}
-  },
+  _load(){ try{ return new Set(JSON.parse(localStorage.getItem(SESSION_KEY)||'[]')); }catch(e){ return new Set(); } },
+  _save(s){ try{ localStorage.setItem(SESSION_KEY, JSON.stringify([...s])); }catch(e){} },
   has(id)  { return this._load().has(id); },
-  add(id)  { const s = this._load(); s.add(id); this._save(s); },
-  delete(id){ const s = this._load(); s.delete(id); this._save(s); },
+  add(id)  { const s=this._load(); s.add(id); this._save(s); },
+  delete(id){ const s=this._load(); s.delete(id); this._save(s); },
 };
 
+/* ── Star particles in feedback panel ── */
 (function(){
   const c=document.getElementById('fb-stars');
   for(let i=0;i<40;i++){
-    const s=document.createElement('div');s.className='fb-star';
+    const s=document.createElement('div'); s.className='fb-star';
     const sz=[2,2,3,4][Math.floor(Math.random()*4)];
     const col=['#c060f0','#9040c0','#60a0f0','#f060a0','#e0d0ff'][Math.floor(Math.random()*5)];
     s.style.cssText=`width:${sz}px;height:${sz}px;background:${col};left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${1.5+Math.random()*3}s;animation-delay:${-Math.random()*4}s;`;
@@ -1643,9 +1813,10 @@ const sessionTokens = {
   }
 })();
 
-let selectedMood='';
-let currentResult='';
+let selectedMood = '';
+let currentResult = '';
 
+/* ── FAB SVGs ── */
 function fabSvgSky(){
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58" width="58" height="58" style="image-rendering:pixelated;display:block">
     <rect x="5"  y="9"  width="48" height="32" fill="#1a2e0c"/>
@@ -1688,15 +1859,13 @@ function showFeedbackFab(theme){
   const fab=document.getElementById('feedback-fab');
   const inner=document.getElementById('fab-inner');
   fab.classList.remove('sky','pxx');
-  const isSky=(theme==='skyonix');
-  fab.classList.add(isSky?'sky':'pxx');
-  inner.innerHTML=isSky?fabSvgSky():fabSvgPxx();
+  fab.classList.add(theme==='skyonix'?'sky':'pxx');
+  inner.innerHTML=theme==='skyonix'?fabSvgSky():fabSvgPxx();
   fab.classList.remove('visible');
   requestAnimationFrame(()=>requestAnimationFrame(()=>fab.classList.add('visible')));
 }
 function hideFeedbackFab(){
-  const fab=document.getElementById('feedback-fab');
-  fab.classList.remove('visible','sky','pxx');
+  document.getElementById('feedback-fab').classList.remove('visible','sky','pxx');
 }
 
 function openFeedback(){
@@ -1716,170 +1885,203 @@ function closeFeedback(){
   sounds.blip();
   document.getElementById('feedback-modal').classList.remove('open');
 }
-document.getElementById('feedback-modal').addEventListener('click',function(e){
-  if(e.target===this){sounds.blip();closeFeedback();}
+document.getElementById('feedback-modal').addEventListener('click', function(e){
+  if(e.target===this){ sounds.blip(); closeFeedback(); }
 });
 
+/* ── TAB SWITCHER ── */
 function switchFbTab(tab){
-  document.getElementById('fb-tab-write').classList.toggle('active',tab==='write');
-  document.getElementById('fb-tab-read').classList.toggle('active',tab==='read');
-  document.getElementById('fb-write-pane').style.display=tab==='write'?'flex':'none';
-  document.getElementById('fb-read-pane').style.display=tab==='read'?'block':'none';
+  document.getElementById('fb-tab-write').classList.toggle('active', tab==='write');
+  document.getElementById('fb-tab-read').classList.toggle('active',  tab==='read');
+
+  // Always hide success screen when switching tabs
+  document.getElementById('fb-success').classList.remove('show');
+
+  document.getElementById('fb-write-pane').style.display = tab==='write' ? 'flex' : 'none';
+  document.getElementById('fb-read-pane').style.display  = tab==='read'  ? 'block': 'none';
+
   if(tab==='read') loadMessages();
 }
 
+/* ── MOOD SELECTOR ── */
 function selectMood(btn){
   document.querySelectorAll('.fb-mood-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
-  selectedMood=btn.dataset.mood;
+  selectedMood = btn.dataset.mood;
   sounds.blip();
 }
 
+/* ── CHAR COUNT ── */
 function updateCharCount(){
-  const t=document.getElementById('fb-text').value.length;
-  document.getElementById('fb-char-count').textContent=`${t} / 280`;
+  const n = document.getElementById('fb-text').value.length;
+  document.getElementById('fb-char-count').textContent = `${n} / 280`;
 }
 
+/* ── RESET FORM (called after "Leave Another" or before new write) ── */
 function resetFeedbackForm(){
-  document.getElementById('fb-success').classList.remove('show');
-  document.getElementById('fb-write-pane').style.display='flex';
-  document.getElementById('fb-text').value='';
-  document.getElementById('fb-name').value='';
+  document.getElementById('fb-text').value  = '';
+  document.getElementById('fb-name').value  = '';
   document.querySelectorAll('.fb-mood-btn').forEach(b=>b.classList.remove('selected'));
-  selectedMood='';
+  selectedMood = '';
   updateCharCount();
+  switchFbTab('write');
 }
 
-/* ── SUBMIT — saves message, registers session token, auto-switches to Read tab ── */
+/* ── SEND BUTTON: show dots, hide label ── */
+function setSubmitLoading(on){
+  const btn   = document.getElementById('fb-submit-btn');
+  const label = document.getElementById('fb-btn-label');
+  const dots  = document.getElementById('fb-send-dots');
+  btn.disabled    = on;
+  label.style.opacity = on ? '0' : '1';
+  dots.style.display  = on ? 'flex': 'none';
+}
+
+/* ── SUBMIT ── */
 async function submitFeedback(){
-  const name=(document.getElementById('fb-name').value.trim()||'Wanderer').slice(0,30);
-  const text=document.getElementById('fb-text').value.trim();
+  const nameEl = document.getElementById('fb-name');
+  const textEl = document.getElementById('fb-text');
+  const name   = (nameEl.value.trim() || 'Wanderer').slice(0, 30);
+  const text   = textEl.value.trim();
+
   if(!text){
-    document.getElementById('fb-text').style.borderColor='#f060a0';
-    setTimeout(()=>{document.getElementById('fb-text').style.borderColor='';},1200);
+    textEl.style.borderColor = '#f060a0';
+    textEl.focus();
+    setTimeout(()=>{ textEl.style.borderColor = ''; }, 1400);
     return;
   }
-  const btn=document.getElementById('fb-submit-btn');
-  btn.disabled=true;btn.textContent='Sending...';
 
-  const msg={
-    id:Date.now()+'_'+Math.random().toString(36).slice(2,7),
+  // Show loading dots on button
+  setSubmitLoading(true);
+
+  const msg = {
+    id:     Date.now() + '_' + Math.random().toString(36).slice(2,7),
     name,
-    mood:selectedMood||'peaceful',
-    result:currentResult||'Unknown',
+    mood:   selectedMood || 'peaceful',
+    result: currentResult || 'Unknown',
     text,
-    ts:Date.now()
+    ts:     Date.now()
   };
 
+  // Write to Firebase
+  let ok = false;
   try{
-    let msgs=[];
-    try{
-      const existing=await window.storage.get('grove_messages',true);
-      if(existing&&existing.value) msgs=JSON.parse(existing.value);
-    }catch(e){msgs=[];}
-    msgs.unshift(msg);
-    if(msgs.length>200) msgs=msgs.slice(0,200);
-    await window.storage.set('grove_messages',JSON.stringify(msgs),true);
-  }catch(e){/* storage may fail gracefully */}
+    await window._db.collection('grove_messages').doc(msg.id).set(msg);
+    sessionTokens.add(msg.id);
+    ok = true;
+  } catch(e){
+    console.error('Firebase write failed:', e);
+  }
 
-  /* Register this message as deletable by this session */
-  sessionTokens.add(msg.id);
+  // Stop loading dots
+  setSubmitLoading(false);
 
+  if(!ok){
+    // Show error inline — don't switch tabs
+    textEl.style.borderColor = '#f060a0';
+    setTimeout(()=>{ textEl.style.borderColor = ''; }, 2000);
+    return;
+  }
+
+  // Play fanfare
   sounds.fanfare();
 
-  /* Show success briefly, then auto-switch to Read tab */
-  document.getElementById('fb-write-pane').style.display='none';
-  const succ=document.getElementById('fb-success');
-  succ.classList.add('show');
+  // Hide write pane, show success screen
+  document.getElementById('fb-write-pane').style.display = 'none';
+  document.getElementById('fb-success').classList.add('show');
 
+  // After 1.8s: reset form, hide success, open Read tab
   setTimeout(()=>{
-    succ.classList.remove('show');
-    document.getElementById('fb-write-pane').style.display='flex';
-    /* Reset the form so "Leave Another" is clean */
-    document.getElementById('fb-text').value='';
-    document.getElementById('fb-name').value='';
-    document.querySelectorAll('.fb-mood-btn').forEach(b=>b.classList.remove('selected'));
-    selectedMood='';
-    updateCharCount();
-    /* Switch to Read tab */
-    switchFbTab('read');
-  }, 1500);
-
-  btn.disabled=false;btn.textContent='&#9658; Send to the Grove';
+    document.getElementById('fb-success').classList.remove('show');
+    resetFeedbackForm();   // clears fields and calls switchFbTab('write')
+    switchFbTab('read');   // then immediately go to read tab
+  }, 1800);
 }
 
-/* ── DELETE — removes a message from shared storage ── */
+/* ── DELETE ── */
 async function deleteMessage(id){
   sounds.blip();
   try{
-    let msgs=[];
-    try{
-      const existing=await window.storage.get('grove_messages',true);
-      if(existing&&existing.value) msgs=JSON.parse(existing.value);
-    }catch(e){msgs=[];}
-    msgs=msgs.filter(m=>m.id!==id);
-    await window.storage.set('grove_messages',JSON.stringify(msgs),true);
+    await window._db.collection('grove_messages').doc(id).delete();
     sessionTokens.delete(id);
-  }catch(e){}
-  /* Refresh the read tab */
+  } catch(e){ console.error('Delete failed:', e); }
   loadMessages();
 }
 
-const moodIcons={loved:'♥',mindblown:'✦',peaceful:'✿',thinking:'◈',lost:'◎'};
-const moodLabels={loved:'loved it',mindblown:'mind blown',peaceful:'at peace',thinking:'thinking...',lost:'a bit lost'};
+/* ── MOOD DISPLAY MAPS ── */
+const moodIcons  = { loved:'♥', mindblown:'✦', peaceful:'✿', thinking:'◈', lost:'◎' };
+const moodLabels = { loved:'loved it', mindblown:'mind blown', peaceful:'at peace', thinking:'thinking...', lost:'a bit lost' };
 
 function timeAgo(ts){
-  const s=Math.floor((Date.now()-ts)/1000);
-  if(s<60) return 'just now';
-  if(s<3600) return Math.floor(s/60)+'m ago';
-  if(s<86400) return Math.floor(s/3600)+'h ago';
+  const s = Math.floor((Date.now()-ts)/1000);
+  if(s < 60)    return 'just now';
+  if(s < 3600)  return Math.floor(s/60)+'m ago';
+  if(s < 86400) return Math.floor(s/3600)+'h ago';
   return Math.floor(s/86400)+'d ago';
 }
 
-/* ── LOAD MESSAGES — shows delete button only for your own session messages ── */
+/* ── LOAD MESSAGES ── */
 async function loadMessages(){
-  const list=document.getElementById('fb-messages-list');
-  const loading=document.getElementById('fb-loading');
-  const empty=document.getElementById('fb-empty');
-  const count=document.getElementById('fb-msg-count');
-  list.innerHTML='';loading.style.display='block';empty.style.display='none';count.textContent='';
-  let msgs=[];
-  try{
-    const data=await window.storage.get('grove_messages',true);
-    if(data&&data.value) msgs=JSON.parse(data.value);
-  }catch(e){msgs=[];}
-  loading.style.display='none';
-  if(!msgs.length){empty.style.display='block';return;}
-  count.textContent=`${msgs.length} whisper${msgs.length===1?'':'s'} in the Grove`;
-  msgs.forEach((msg,i)=>{
-    const card=document.createElement('div');
-    card.className=`fb-msg-card mood-${msg.mood||'peaceful'}`;
-    card.style.animationDelay=(i*0.06)+'s';
-    const icon=moodIcons[msg.mood]||'✿';
-    const label=moodLabels[msg.mood]||msg.mood||'';
+  const list    = document.getElementById('fb-messages-list');
+  const loading = document.getElementById('fb-loading');
+  const empty   = document.getElementById('fb-empty');
+  const count   = document.getElementById('fb-msg-count');
 
-    /* Meta row */
-    const meta=document.createElement('div');meta.className='fb-msg-meta';
-    meta.innerHTML=`
-      <span class="fb-msg-name">${escapeHtml(msg.name||'Wanderer')}</span>
-      <span class="fb-msg-mood">${icon} ${label}</span>
-      <span class="fb-msg-result">${escapeHtml(msg.result||'')}</span>
-      <span class="fb-msg-time">${timeAgo(msg.ts)}</span>`;
+  list.innerHTML = '';
+  loading.style.display = 'block';
+  empty.style.display   = 'none';
+  count.textContent     = '';
+
+  let msgs = [];
+  try{
+    const snap = await window._db.collection('grove_messages')
+                   .orderBy('ts','desc').limit(200).get();
+    snap.forEach(doc => msgs.push(doc.data()));
+  } catch(e){
+    console.error('Load messages failed:', e);
+  }
+
+  loading.style.display = 'none';
+
+  if(!msgs.length){
+    empty.style.display = 'block';
+    return;
+  }
+
+  count.textContent = `${msgs.length} whisper${msgs.length===1?'':'s'} in the Grove`;
+
+  msgs.forEach((msg, i)=>{
+    const card = document.createElement('div');
+    card.className = `fb-msg-card mood-${msg.mood||'peaceful'}`;
+    card.style.animationDelay = (i * 0.05) + 's';
+
+    const icon  = moodIcons[msg.mood]  || '✿';
+    const label = moodLabels[msg.mood] || msg.mood || '';
+
+    // Meta row
+    const meta = document.createElement('div');
+    meta.className = 'fb-msg-meta';
+    meta.innerHTML =
+      `<span class="fb-msg-name">${escapeHtml(msg.name||'Wanderer')}</span>` +
+      `<span class="fb-msg-mood">${icon} ${label}</span>` +
+      `<span class="fb-msg-result">${escapeHtml(msg.result||'')}</span>` +
+      `<span class="fb-msg-time">${timeAgo(msg.ts)}</span>`;
     card.appendChild(meta);
 
-    /* Message text */
-    const textEl=document.createElement('div');textEl.className='fb-msg-text';
-    textEl.textContent=msg.text;
+    // Message text
+    const textEl = document.createElement('div');
+    textEl.className   = 'fb-msg-text';
+    textEl.textContent = msg.text;
     card.appendChild(textEl);
 
-    /* Delete button — only visible if this session sent the message */
+    // Delete button — only for messages this browser sent
     if(sessionTokens.has(msg.id)){
-      const delBtn=document.createElement('button');
-      delBtn.className='fb-msg-delete';
-      delBtn.textContent='✕ delete my message';
-      delBtn.onclick=()=>{
-        delBtn.textContent='deleting...';
-        delBtn.disabled=true;
+      const delBtn = document.createElement('button');
+      delBtn.className   = 'fb-msg-delete';
+      delBtn.textContent = '✕ delete my message';
+      delBtn.onclick = ()=>{
+        delBtn.textContent = 'deleting...';
+        delBtn.disabled    = true;
         deleteMessage(msg.id);
       };
       card.appendChild(delBtn);
