@@ -5,7 +5,7 @@ An interactive personality quiz built with <b>vanilla HTML, CSS, and JavaScript<
 </p>
 
 <p align="center">
-Answer a series of questions guided by two characters — <b>Skyonix</b> and <b>Pexxelina</b> — and discover which of <b>twelve intellectual personalities</b> matches the way your mind works.
+Answer a series of questions guided by two characters — <b>Skyonix</b> and <b>Pxxelina</b> — and discover which of <b>twelve intellectual personalities</b> matches the way your mind works.
 </p>
 
 ---
@@ -42,7 +42,7 @@ When **Skyonix** is on screen, the site shifts to its **natural earthy green the
 
 ---
 
-## 🌌 Pexxelina
+## 🌌 Pxxelina
 Guardian of **logic, creation, and the cosmos**.
 
 She guides the paths of:
@@ -54,7 +54,7 @@ She guides the paths of:
 - Philosophy  
 - Creative Expression  
 
-When **Pexxelina** appears, the entire site transitions into a **soft twilight purple theme**.
+When **Pxxelina** appears, the entire site transitions into a **soft twilight purple theme**.
 
 ---
 
