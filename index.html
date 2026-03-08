@@ -261,7 +261,7 @@ button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #0a1608;}
 .speaker-tag{display:inline-block;font-family:'Press Start 2P',"Space Mono",monospace;font-size:0.48em;
   color:#fff;padding:3px 12px;margin-bottom:10px;
   clip-path:polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);}
-.speaker-tag.skyonix{background:#3a7a2a;}.speaker-tag.pexxelina{background:#8a4a9a;}
+.speaker-tag.skyonix{background:#3a7a2a;}.speaker-tag.pxxelina{background:#8a4a9a;}
 
 img{max-width:300px;margin-bottom:20px;}
 .result-icon-display{font-size:3em;display:block;margin:10px auto 20px;animation:floatbob 3s ease-in-out infinite;}
@@ -294,19 +294,19 @@ footer{text-align:center;padding:10px 0 30px;font-size:0.8em;color:#4a6a3a;}
 /* THEME */
 body{transition:background-color 0.7s ease,background-image 0.7s ease;}
 body.theme-skyonix{background-color:#e8ede0;background-image:radial-gradient(ellipse at 10% 90%,#c8d8a8 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,#d0ddb8 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,#dde8c8 0%,transparent 80%);}
-body.theme-pexxelina{background-color:#ede0f0;background-image:radial-gradient(ellipse at 10% 90%,#d8b8e8 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,#e8c8f0 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,#f0d8f8 0%,transparent 80%);}
-body.theme-pexxelina button{background-color:#5a2a7a;color:#f8eaff;}
-body.theme-pexxelina button:hover{background-color:#e8c8f8;color:#2a0a3a;}
-body.theme-pexxelina .dialogue-btn{background-color:#5a2a7a;}
-body.theme-pexxelina .question-btn{background-color:#6a3a8a;}
-body.theme-pexxelina .dialogue-scene,body.theme-pexxelina #text-box.dialogue-scene{background-color:#faf0ff;border-color:#9a5aaa;}
-body.theme-pexxelina .creator-note{background:#faf0ff;border-color:#9a5aaa;}
-body.theme-pexxelina a:link{color:#7a3a9a;}body.theme-pexxelina a:visited{color:#4a1a6a;}
-body.theme-pexxelina footer{color:#7a4a8a;}
-body.theme-pexxelina .result-gallery{background:#faf0ff;border-color:#9a5aaa;}
-body.theme-pexxelina .result-card{background:#f5e8ff;border-color:#9a5aaa;}
-body.theme-pexxelina .result-card .card-name{color:#3a0a5a;}
-body.theme-pexxelina .result-card .card-trait{color:#6a4a7a;}
+body.theme-pxxelina{background-color:#ede0f0;background-image:radial-gradient(ellipse at 10% 90%,#d8b8e8 0%,transparent 50%),radial-gradient(ellipse at 90% 10%,#e8c8f0 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,#f0d8f8 0%,transparent 80%);}
+body.theme-pxxelina button{background-color:#5a2a7a;color:#f8eaff;}
+body.theme-pxxelina button:hover{background-color:#e8c8f8;color:#2a0a3a;}
+body.theme-pxxelina .dialogue-btn{background-color:#5a2a7a;}
+body.theme-pxxelina .question-btn{background-color:#6a3a8a;}
+body.theme-pxxelina .dialogue-scene,body.theme-pxxelina #text-box.dialogue-scene{background-color:#faf0ff;border-color:#9a5aaa;}
+body.theme-pxxelina .creator-note{background:#faf0ff;border-color:#9a5aaa;}
+body.theme-pxxelina a:link{color:#7a3a9a;}body.theme-pxxelina a:visited{color:#4a1a6a;}
+body.theme-pxxelina footer{color:#7a4a8a;}
+body.theme-pxxelina .result-gallery{background:#faf0ff;border-color:#9a5aaa;}
+body.theme-pxxelina .result-card{background:#f5e8ff;border-color:#9a5aaa;}
+body.theme-pxxelina .result-card .card-name{color:#3a0a5a;}
+body.theme-pxxelina .result-card .card-trait{color:#6a4a7a;}
 button,.dialogue-scene,#text-box.dialogue-scene,.creator-note,footer,.result-gallery,.result-card{transition:background-color 0.6s ease,border-color 0.6s ease,color 0.6s ease;}
 
 /* SHARE MODAL */
@@ -335,6 +335,286 @@ button,.dialogue-scene,#text-box.dialogue-scene,.creator-note,footer,.result-gal
 .share-btn.close-btn:hover{color:#c8e8a8;}
 #copy-toast{display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#2a4a1a;color:#c8f090;padding:10px 22px;clip-path:polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);font-size:0.82em;font-family:'Space Mono',monospace;z-index:300;border:2px solid #4a7a2a;box-shadow:4px 4px 0 #0a1608;animation:toastpop 0.3s steps(4) both;}
 @keyframes toastpop{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ═══════════════════════════════════
+   FEEDBACK BUTTON (floating, results only)
+═══════════════════════════════════ */
+#feedback-fab{
+  display:none;position:fixed;bottom:28px;right:28px;z-index:150;
+  width:62px;height:62px;cursor:pointer;border:0;background:none;padding:0;
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+#feedback-fab:hover{transform:scale(1.14) translateY(-3px);}
+#feedback-fab:active{transform:scale(0.96) translateY(1px);transition-duration:0.08s;}
+#feedback-fab.visible{display:block;animation:fabrise 0.65s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes fabrise{from{transform:scale(0) rotate(-180deg) translateY(20px);opacity:0}to{transform:scale(1) rotate(0deg) translateY(0);opacity:1}}
+
+/* idle float */
+#feedback-fab.visible{animation:fabrise 0.65s cubic-bezier(0.34,1.56,0.64,1) both,fabfloat 3.2s ease-in-out 0.8s infinite;}
+@keyframes fabfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#feedback-fab:hover{transform:scale(1.14) translateY(-6px);animation:fabrise 0s,none;}
+#feedback-fab:active{transform:scale(0.95) translateY(2px);}
+
+/* glow ring — theme-aware via CSS vars set by JS */
+#fab-inner{
+  position:relative;width:62px;height:62px;
+  display:flex;align-items:center;justify-content:center;
+  transition:filter 0.3s ease;
+  filter:var(--fab-glow, drop-shadow(0 0 7px rgba(90,170,58,0.7)));
+}
+#feedback-fab:hover #fab-inner{
+  filter:var(--fab-glow-hover, drop-shadow(0 0 18px rgba(90,170,58,1)) drop-shadow(0 0 32px rgba(90,170,58,0.4)));
+}
+
+/* theme: skyonix — greens */
+#feedback-fab.sky #fab-inner{
+  filter:drop-shadow(0 0 7px rgba(90,170,58,0.8)) drop-shadow(0 0 2px rgba(200,240,150,0.3));
+}
+#feedback-fab.sky:hover #fab-inner{
+  filter:drop-shadow(0 0 16px rgba(106,200,58,1)) drop-shadow(0 0 32px rgba(106,200,58,0.5)) drop-shadow(0 0 2px #d0ffb0);
+}
+/* theme: pxxelina — purples */
+#feedback-fab.pxx #fab-inner{
+  filter:drop-shadow(0 0 7px rgba(180,60,240,0.8)) drop-shadow(0 0 2px rgba(220,150,255,0.3));
+}
+#feedback-fab.pxx:hover #fab-inner{
+  filter:drop-shadow(0 0 16px rgba(200,60,255,1)) drop-shadow(0 0 32px rgba(200,60,255,0.5)) drop-shadow(0 0 2px #ffd0ff);
+}
+
+/* ping dot — also themed */
+.fab-ping{
+  position:absolute;top:-3px;right:-3px;width:13px;height:13px;
+  clip-path:polygon(2px 0%,calc(100% - 2px) 0%,100% 2px,100% calc(100% - 2px),calc(100% - 2px) 100%,2px 100%,0% calc(100% - 2px),0% 2px);
+  animation:fabping 2.4s ease-out infinite;
+}
+#feedback-fab.sky  .fab-ping{background:#7ec850;}
+#feedback-fab.pxx  .fab-ping{background:#e060f0;}
+@keyframes fabping{
+  0%{transform:scale(1);opacity:1}
+  60%{transform:scale(2.4);opacity:0}
+  100%{transform:scale(1);opacity:0}
+}
+
+/* ═══════════════════════════════════
+   FEEDBACK MODAL
+═══════════════════════════════════ */
+#feedback-modal{
+  display:none;position:fixed;inset:0;z-index:210;
+  background:rgba(4,2,18,0.88);
+  justify-content:center;align-items:center;flex-direction:column;gap:0;
+  backdrop-filter:blur(2px);
+}
+#feedback-modal.open{display:flex;}
+#feedback-panel{
+  position:relative;width:min(540px,94vw);max-height:88vh;
+  background:linear-gradient(160deg,#0c0820,#14103a,#0c1810,#100c2a);
+  border:3px solid #6030b0;outline:2px solid #2a1060;outline-offset:2px;
+  box-shadow:6px 6px 0 #08040c,0 0 60px rgba(120,40,220,0.4),0 0 120px rgba(60,200,80,0.08);
+  overflow:hidden;
+  animation:panelpop 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+  display:flex;flex-direction:column;
+  transition:background 0.4s ease,border-color 0.4s ease,box-shadow 0.4s ease;
+}
+@keyframes panelpop{from{transform:scale(0.75) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+#feedback-panel::before{
+  content:'';position:absolute;top:0;left:-70%;width:45%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(160,80,255,0.06),transparent);
+  animation:panelshimmer 3s ease-in-out infinite;pointer-events:none;z-index:0;
+}
+@keyframes panelshimmer{0%{left:-70%}100%{left:120%}}
+.fb-stars{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.fb-star{position:absolute;animation:fbstartwink steps(3) infinite;}
+@keyframes fbstartwink{0%,100%{opacity:0.8}50%{opacity:0.1}}
+.fb-header{
+  position:relative;z-index:2;padding:18px 22px 12px;
+  border-bottom:2px solid rgba(100,40,180,0.4);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  flex-shrink:0;
+  transition:border-color 0.4s ease;
+}
+.fb-title{font-family:'Press Start 2P',monospace;font-size:0.55em;color:#c8a0ff;letter-spacing:2px;
+  text-shadow:0 0 12px rgba(180,80,255,0.7);
+  transition:color 0.4s ease,text-shadow 0.4s ease;}
+.fb-close{background:none;border:2px solid rgba(100,40,180,0.5);color:#8060b0;
+  font-family:'Space Mono',monospace;font-size:0.8em;padding:4px 10px;cursor:pointer;
+  clip-path:polygon(3px 0%,calc(100% - 3px) 0%,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0% calc(100% - 3px),0% 3px);
+  width:auto;margin:0;transition:color 0.1s,border-color 0.1s,box-shadow 0.1s;box-shadow:none;}
+.fb-close:hover{color:#e0c0ff;border-color:#b060e0;box-shadow:0 0 10px rgba(160,60,220,0.5);}
+.fb-tabs{position:relative;z-index:2;display:flex;gap:0;border-bottom:2px solid rgba(100,40,180,0.35);flex-shrink:0;
+  transition:border-color 0.4s ease;}
+.fb-tab{flex:1;padding:10px 6px;font-family:'Press Start 2P',monospace;font-size:0.38em;
+  background:none;border:0;color:#5a4080;cursor:pointer;letter-spacing:1px;
+  width:auto;margin:0;clip-path:none;box-shadow:none;
+  transition:color 0.15s,background 0.15s;border-bottom:3px solid transparent;}
+.fb-tab:hover{color:#a070d0;background:rgba(100,40,180,0.1);}
+.fb-tab.active{color:#c8a0ff;border-bottom:3px solid #9040e0;background:rgba(120,40,200,0.12);}
+.fb-body{position:relative;z-index:2;flex:1;overflow-y:auto;padding:16px 20px;min-height:0;}
+.fb-body::-webkit-scrollbar{width:4px;}
+.fb-body::-webkit-scrollbar-track{background:rgba(60,20,100,0.2);}
+.fb-body::-webkit-scrollbar-thumb{background:#5a2a90;border-radius:0;}
+
+/* Write tab */
+.fb-write-area{display:flex;flex-direction:column;gap:12px;}
+.fb-label{font-family:'Press Start 2P',monospace;font-size:0.36em;color:#7a50a0;letter-spacing:1px;margin-bottom:4px;
+  transition:color 0.4s ease;}
+.fb-input, .fb-textarea{
+  background:rgba(20,10,40,0.7);border:2px solid rgba(90,30,160,0.5);color:#e0d0ff;
+  font-family:'Space Mono',monospace;font-size:0.88em;padding:10px 12px;
+  outline:none;width:100%;resize:none;
+  clip-path:polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
+  transition:border-color 0.15s,box-shadow 0.15s,background 0.4s ease,color 0.4s ease;
+}
+.fb-input:focus,.fb-textarea:focus{border-color:#9040e0;box-shadow:0 0 12px rgba(140,50,220,0.35);}
+.fb-textarea{min-height:90px;line-height:1.6;}
+.fb-input::placeholder,.fb-textarea::placeholder{color:#4a3060;opacity:1;}
+.fb-mood{display:flex;gap:8px;flex-wrap:wrap;}
+.fb-mood-btn{
+  background:rgba(30,15,60,0.6);border:2px solid rgba(80,30,140,0.5);
+  font-family:'Space Mono',monospace;font-size:0.78em;padding:6px 12px;color:#8060b0;cursor:pointer;
+  clip-path:polygon(3px 0%,calc(100% - 3px) 0%,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0% calc(100% - 3px),0% 3px);
+  width:auto;margin:0;box-shadow:none;transition:all 0.12s;
+}
+.fb-mood-btn:hover{border-color:#9040e0;color:#c090e0;}
+.fb-mood-btn.selected{background:rgba(120,40,200,0.3);border-color:#c060f0;color:#e0b0ff;
+  box-shadow:0 0 8px rgba(160,60,220,0.4);}
+.fb-submit{
+  background:linear-gradient(90deg,#4a1a80,#6030a0,#4a1a80);background-size:200% 100%;
+  color:#e8d8ff;font-family:'Press Start 2P',monospace;font-size:0.42em;padding:12px 22px;
+  border:0;cursor:pointer;letter-spacing:2px;margin:0;width:auto;align-self:flex-start;
+  clip-path:polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
+  box-shadow:4px 4px 0 #0c0418;transition:background-position 0.3s,box-shadow 0.08s steps(2);
+}
+.fb-submit:hover{background-position:100% 0;box-shadow:4px 4px 0 #3a1060,0 0 20px rgba(160,60,220,0.5);}
+.fb-submit:disabled{opacity:0.4;cursor:not-allowed;}
+.fb-char-count{font-size:0.72em;color:#4a3060;text-align:right;transition:color 0.4s ease;}
+.fb-success{display:none;flex-direction:column;align-items:center;gap:14px;padding:20px 0;text-align:center;}
+.fb-success.show{display:flex;}
+.fb-success-icon{animation:successspin 0.6s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes successspin{from{transform:scale(0) rotate(-180deg)}to{transform:scale(1) rotate(0deg)}}
+.fb-success-text{font-family:'Press Start 2P',monospace;font-size:0.45em;color:#c8a0ff;line-height:1.8;
+  transition:color 0.4s ease;}
+
+/* Read tab */
+.fb-messages-list{display:flex;flex-direction:column;gap:12px;}
+.fb-msg-card{
+  background:rgba(20,10,40,0.6);border:2px solid rgba(80,30,140,0.4);padding:12px 14px;
+  position:relative;overflow:hidden;
+  animation:msgslide 0.4s cubic-bezier(0.16,1,0.3,1) both;
+  transition:background 0.4s ease,border-color 0.4s ease;
+}
+@keyframes msgslide{from{transform:translateX(-12px);opacity:0}to{transform:translateX(0);opacity:1}}
+.fb-msg-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+.fb-msg-card.mood-loved::before{background:#f060a0;}
+.fb-msg-card.mood-mindblown::before{background:#a040f0;}
+.fb-msg-card.mood-peaceful::before{background:#40c0a0;}
+.fb-msg-card.mood-thinking::before{background:#60a0f0;}
+.fb-msg-card.mood-lost::before{background:#f0a040;}
+.fb-msg-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+.fb-msg-name{font-family:'Press Start 2P',monospace;font-size:0.36em;color:#a070d0;transition:color 0.4s ease;}
+.fb-msg-mood{font-size:0.76em;opacity:0.8;}
+.fb-msg-result{font-family:'Press Start 2P',monospace;font-size:0.3em;
+  background:rgba(80,30,140,0.35);color:#8060b0;padding:2px 7px;
+  clip-path:polygon(2px 0%,calc(100% - 2px) 0%,100% 2px,100% calc(100% - 2px),calc(100% - 2px) 100%,2px 100%,0% calc(100% - 2px),0% 2px);
+  transition:background 0.4s ease,color 0.4s ease;}
+.fb-msg-time{font-size:0.68em;color:#3a2860;margin-left:auto;transition:color 0.4s ease;}
+.fb-msg-text{font-size:0.84em;color:#c0a8e8;line-height:1.7;transition:color 0.4s ease;}
+.fb-empty{text-align:center;padding:30px 0;color:#4a3060;font-size:0.82em;line-height:2;transition:color 0.4s ease;}
+.fb-loading{text-align:center;padding:20px;color:#6a40a0;font-size:0.82em;animation:loadpulse 1.2s ease-in-out infinite;transition:color 0.4s ease;}
+@keyframes loadpulse{0%,100%{opacity:0.4}50%{opacity:1}}
+.fb-msg-count{font-family:'Press Start 2P',monospace;font-size:0.32em;color:#5a3880;
+  text-align:right;margin-bottom:10px;letter-spacing:1px;transition:color 0.4s ease;}
+
+/* ── PROGRESS BAR ── */
+#progress-bar-wrap{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  height:6px;background:rgba(42,68,24,0.18);
+  pointer-events:none;opacity:0;transition:opacity 0.3s ease;
+}
+#progress-bar-wrap.visible{opacity:1;}
+#progress-bar-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#4a8a28,#6aaa3a,#90e060);
+  transition:width 0.45s cubic-bezier(0.4,0,0.2,1);
+  box-shadow:0 0 8px rgba(106,170,58,0.6);
+}
+body.theme-pxxelina #progress-bar-fill{
+  background:linear-gradient(90deg,#7a2a9a,#c060d0,#e080f0);
+  box-shadow:0 0 8px rgba(192,96,208,0.6);
+}
+#progress-label{
+  position:fixed;top:10px;left:50%;transform:translateX(-50%);
+  z-index:31;font-family:'Press Start 2P',monospace;font-size:0.32em;
+  color:#4a8a28;letter-spacing:2px;opacity:0;
+  transition:opacity 0.3s ease,color 0.4s ease;
+  pointer-events:none;text-shadow:0 0 8px rgba(106,170,58,0.4);
+}
+#progress-label.visible{opacity:1;}
+body.theme-pxxelina #progress-label{color:#c060d0;text-shadow:0 0 8px rgba(192,96,208,0.4);}
+
+/* ── GALLERY CARD DESCRIPTION ── */
+.result-card .card-desc{
+  font-size:0.68em;color:#5a7a4a;line-height:1.6;margin-top:8px;
+  border-top:1px solid rgba(74,122,42,0.25);padding-top:8px;
+  display:none;
+}
+.result-card.expanded .card-desc{display:block;}
+.result-card .card-toggle{
+  font-family:'Press Start 2P',monospace;font-size:0.3em;
+  color:#4a7a2a;margin-top:8px;cursor:pointer;letter-spacing:1px;
+  background:none;border:none;padding:2px 0;width:auto;
+  display:block;margin-left:auto;margin-right:auto;
+  box-shadow:none;clip-path:none;
+}
+.result-card .card-toggle:hover{color:#6aaa3a;background:none;box-shadow:none;}
+body.theme-pxxelina .result-card .card-desc{color:#7a4a8a;border-top-color:rgba(154,90,170,0.25);}
+body.theme-pxxelina .result-card .card-toggle{color:#9a5aaa;}
+body.theme-pxxelina .result-card .card-toggle:hover{color:#c060d0;}
+
+/* ── GALLERY RESULT COUNT BADGE ── */
+.result-count-badge{
+  font-family:'Press Start 2P',monospace;font-size:0.28em;
+  color:#6aaa3a;letter-spacing:1px;margin-top:5px;display:block;
+  opacity:0.8;
+}
+body.theme-pxxelina .result-count-badge{color:#c060d0;}
+
+/* ── FEEDBACK PANEL: SKYONIX THEME ── */
+#feedback-panel.fb-panel-sky{
+  background:linear-gradient(160deg,#071a04,#0e2a08,#071a04,#0a200a);
+  border:3px solid #4a8a28;outline:2px solid #1a4008;outline-offset:2px;
+  box-shadow:6px 6px 0 #020a00,0 0 60px rgba(80,160,40,0.35),0 0 120px rgba(40,120,20,0.12);
+}
+#feedback-panel.fb-panel-sky::before{
+  background:linear-gradient(90deg,transparent,rgba(80,200,60,0.06),transparent);
+}
+#feedback-panel.fb-panel-sky .fb-header{border-bottom:2px solid rgba(74,138,40,0.4);}
+#feedback-panel.fb-panel-sky .fb-title{color:#90e060;text-shadow:0 0 12px rgba(100,200,60,0.7);}
+#feedback-panel.fb-panel-sky .fb-close{border:2px solid rgba(60,120,20,0.5);color:#508030;}
+#feedback-panel.fb-panel-sky .fb-close:hover{color:#c8f090;border-color:#6aaa3a;box-shadow:0 0 10px rgba(90,180,40,0.5);}
+#feedback-panel.fb-panel-sky .fb-tabs{border-bottom:2px solid rgba(74,138,40,0.35);}
+#feedback-panel.fb-panel-sky .fb-tab{color:#3a6020;}
+#feedback-panel.fb-panel-sky .fb-tab:hover{color:#70c040;background:rgba(60,120,20,0.1);}
+#feedback-panel.fb-panel-sky .fb-tab.active{color:#90e060;border-bottom:3px solid #5aaa30;background:rgba(60,140,20,0.12);}
+#feedback-panel.fb-panel-sky .fb-body::-webkit-scrollbar-thumb{background:#2a6010;}
+#feedback-panel.fb-panel-sky .fb-label{color:#4a8030;}
+#feedback-panel.fb-panel-sky .fb-input,#feedback-panel.fb-panel-sky .fb-textarea{background:rgba(4,18,2,0.7);border:2px solid rgba(50,120,10,0.5);color:#d0f0a0;}
+#feedback-panel.fb-panel-sky .fb-input:focus,#feedback-panel.fb-panel-sky .fb-textarea:focus{border-color:#5aaa30;box-shadow:0 0 12px rgba(80,170,40,0.35);}
+#feedback-panel.fb-panel-sky .fb-input::placeholder,#feedback-panel.fb-panel-sky .fb-textarea::placeholder{color:#2a5010;opacity:1;}
+#feedback-panel.fb-panel-sky .fb-mood-btn{background:rgba(10,30,4,0.6);border:2px solid rgba(50,110,10,0.5);color:#508030;}
+#feedback-panel.fb-panel-sky .fb-mood-btn:hover{border-color:#5aaa30;color:#90d050;}
+#feedback-panel.fb-panel-sky .fb-mood-btn.selected{background:rgba(60,130,20,0.3);border-color:#7ac840;color:#c8f090;box-shadow:0 0 8px rgba(90,180,40,0.4);}
+#feedback-panel.fb-panel-sky .fb-submit{background:linear-gradient(90deg,#1a4808,#2a6810,#1a4808);background-size:200% 100%;color:#d0f090;box-shadow:4px 4px 0 #010800;}
+#feedback-panel.fb-panel-sky .fb-submit:hover{background-position:100% 0;box-shadow:4px 4px 0 #1a4808,0 0 20px rgba(90,180,40,0.5);}
+#feedback-panel.fb-panel-sky .fb-char-count{color:#2a5010;}
+#feedback-panel.fb-panel-sky .fb-success-text{color:#90e060;}
+#feedback-panel.fb-panel-sky .fb-msg-card{background:rgba(4,18,2,0.6);border:2px solid rgba(50,110,10,0.4);}
+#feedback-panel.fb-panel-sky .fb-msg-name{color:#70c040;}
+#feedback-panel.fb-panel-sky .fb-msg-result{background:rgba(50,110,10,0.35);color:#508030;}
+#feedback-panel.fb-panel-sky .fb-msg-time{color:#2a5010;}
+#feedback-panel.fb-panel-sky .fb-msg-text{color:#b0d890;}
+#feedback-panel.fb-panel-sky .fb-empty{color:#2a5010;}
+#feedback-panel.fb-panel-sky .fb-loading{color:#4a8030;}
+#feedback-panel.fb-panel-sky .fb-msg-count{color:#3a6820;}
 </style>
 </head>
 <body>
@@ -366,6 +646,8 @@ button,.dialogue-scene,#text-box.dialogue-scene,.creator-note,footer,.result-gal
 <div id="curtain"></div>
 
 <!-- ═══════ QUIZ ═══════ -->
+<div id="progress-bar-wrap"><div id="progress-bar-fill"></div></div>
+<div id="progress-label"></div>
 <div id="quiz-body">
   <div id="quiz-border">
     <svg class="px-corner tl" viewBox="0 0 40 40"><rect x="0" y="0" width="10" height="40" fill="#4a7a2a" opacity="0.45"/><rect x="0" y="0" width="40" height="10" fill="#4a7a2a" opacity="0.45"/><rect x="10" y="10" width="6" height="6" fill="#6aaa3a" opacity="0.7"/><rect x="16" y="16" width="4" height="4" fill="#4a7a2a" opacity="0.4"/></svg>
@@ -381,7 +663,7 @@ button,.dialogue-scene,#text-box.dialogue-scene,.creator-note,footer,.result-gal
     <div id="text-box"></div>
     <div id="buttons"></div>
   </div>
-  <footer>Made by <a href="https://github.com/SkyonixTheKing23" target="_blank">Skyonix</a> &amp; <a href="https://github.com/pxxelina" target="_blank">Pexxelina</a> &nbsp;&#183;&nbsp; &#169; 2026</footer>
+  <footer>Made by <a href="https://github.com/SkyonixTheKing23" target="_blank">Skyonix</a> &amp; <a href="https://github.com/pxxelina" target="_blank">Pxxelina</a> &nbsp;&#183;&nbsp; &#169; 2026</footer>
 </div>
 
 <!-- Share Modal -->
@@ -394,7 +676,7 @@ button,.dialogue-scene,#text-box.dialogue-scene,.creator-note,footer,.result-gal
     <div class="sc-subtitle" id="sc-subtitle">World-Builder</div>
     <div class="sc-divider"></div>
     <div class="sc-trait" id="sc-trait">Imaginative &#183; Free &#183; Original</div>
-    <div class="sc-owner" id="sc-owner">&#10022; Revealed by Pexxelina</div>
+    <div class="sc-owner" id="sc-owner">&#10022; Revealed by Pxxelina</div>
     <div class="sc-footer">thegrove.skyonix.dev</div>
   </div>
   <div class="share-actions">
@@ -404,6 +686,75 @@ button,.dialogue-scene,#text-box.dialogue-scene,.creator-note,footer,.result-gal
   </div>
 </div>
 <div id="copy-toast">&#10003; Copied!</div>
+
+<!-- ═══════ FEEDBACK FAB ═══════ -->
+<button id="feedback-fab" title="Leave Feedback" onclick="openFeedback()">
+  <div class="fab-ping"></div>
+  <div id="fab-inner"></div>
+</button>
+
+<!-- ═══════ FEEDBACK MODAL ═══════ -->
+<div id="feedback-modal">
+  <div id="feedback-panel">
+    <div class="fb-stars" id="fb-stars"></div>
+    <div class="fb-header">
+      <div class="fb-title">&#10022; Grove Whispers &#10022;</div>
+      <button class="fb-close" onclick="closeFeedback()">&#10005; Close</button>
+    </div>
+    <div class="fb-tabs">
+      <button class="fb-tab active" id="fb-tab-write" onclick="switchFbTab('write')">&#9998; Leave a Message</button>
+      <button class="fb-tab" id="fb-tab-read"  onclick="switchFbTab('read')">&#9776; Read Messages</button>
+    </div>
+    <div class="fb-body" id="fb-body">
+      <!-- Write tab -->
+      <div id="fb-write-pane" class="fb-write-area">
+        <div>
+          <div class="fb-label">Your name (or stay mysterious)</div>
+          <input class="fb-input" id="fb-name" type="text" placeholder="wanderer..." maxlength="30"/>
+        </div>
+        <div>
+          <div class="fb-label">How did the Grove make you feel?</div>
+          <div class="fb-mood" id="fb-mood-row">
+            <button class="fb-mood-btn" data-mood="loved"      onclick="selectMood(this)">loved it</button>
+            <button class="fb-mood-btn" data-mood="mindblown"  onclick="selectMood(this)">mind blown</button>
+            <button class="fb-mood-btn" data-mood="peaceful"   onclick="selectMood(this)">at peace</button>
+            <button class="fb-mood-btn" data-mood="thinking"   onclick="selectMood(this)">thinking...</button>
+            <button class="fb-mood-btn" data-mood="lost"       onclick="selectMood(this)">a bit lost</button>
+          </div>
+        </div>
+        <div>
+          <div class="fb-label">Your message</div>
+          <textarea class="fb-textarea" id="fb-text" maxlength="280" placeholder="Leave a thought for other wanderers..." oninput="updateCharCount()"></textarea>
+          <div class="fb-char-count" id="fb-char-count">0 / 280</div>
+        </div>
+        <button class="fb-submit" id="fb-submit-btn" onclick="submitFeedback()">&#9658; Send to the Grove</button>
+        <div class="fb-success" id="fb-success">
+          <div class="fb-success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="60" height="60" style="image-rendering:pixelated">
+              <rect x="20" y="4"  width="8"  height="40" fill="#c060f0" opacity="0.9"/>
+              <rect x="4"  y="20" width="40" height="8"  fill="#c060f0" opacity="0.9"/>
+              <rect x="8"  y="8"  width="8"  height="8"  fill="#9040c0"/>
+              <rect x="32" y="8"  width="8"  height="8"  fill="#9040c0"/>
+              <rect x="8"  y="32" width="8"  height="8"  fill="#9040c0"/>
+              <rect x="32" y="32" width="8"  height="8"  fill="#9040c0"/>
+              <rect x="18" y="18" width="12" height="12" fill="#f0d0ff"/>
+              <rect x="20" y="20" width="8"  height="8"  fill="#ffffff"/>
+            </svg>
+          </div>
+          <div class="fb-success-text">Your whisper has been<br>carried into the Grove.</div>
+          <button class="fb-submit" onclick="resetFeedbackForm()" style="font-size:0.38em">&#9658; Leave Another</button>
+        </div>
+      </div>
+      <!-- Read tab -->
+      <div id="fb-read-pane" style="display:none">
+        <div class="fb-msg-count" id="fb-msg-count"></div>
+        <div class="fb-loading" id="fb-loading">Loading whispers...</div>
+        <div class="fb-messages-list" id="fb-messages-list"></div>
+        <div class="fb-empty" id="fb-empty" style="display:none">No messages yet.<br>Be the first to leave a whisper.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ════════════════════════════════════════════
@@ -450,7 +801,7 @@ const PX = {
     </svg>`;
   },
 
-  pexxelina(frame){
+  pxxelina(frame){
     const orbO=frame?"0.9":"0.5",orbR=frame?7:5,aLift=frame?-4:0,inner=Math.max(2,orbR-3);
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 90" width="145" height="190" style="image-rendering:pixelated;display:block">
     <ellipse cx="32" cy="84" rx="15" ry="3" fill="#9a4aaa" opacity="0.3"/>
@@ -830,12 +1181,12 @@ const PX = {
    RESULT DATA — icon is now a PX function key
 ════════════════════════════════════════════ */
 const resultData = {
-  Programming: {owner:'pexxelina',iconKey:'icon_laptop',name:"The Programmer",subtitle:"Architect of Logic",desc:"Your mind is a machine — elegant, precise, always looking for the most efficient path. You find deep satisfaction in turning abstract ideas into working systems. Where others see chaos, you see code waiting to be written.",trait:"Logical · Systematic · Builder"},
-  Maths:       {owner:'pexxelina',iconKey:'icon_infinity',name:"The Mathematician",subtitle:"Speaker of the Universe's Language",desc:"You see beauty in abstraction. To you, an elegant proof is as moving as a sunset. You think in structures and relationships — and feel most at home where everything is rigorous, complete, and undeniably true.",trait:"Abstract · Precise · Elegant"},
-  Physics:     {owner:'pexxelina',iconKey:'icon_atom',name:"The Physicist",subtitle:"Force Whisperer",desc:"You're never satisfied with surface explanations. You want the bedrock — the forces, fields, and fundamental laws beneath everything visible. Your mind reaches naturally toward the deepest questions reality offers.",trait:"Deep · Visionary · Fearless"},
-  Science:     {owner:'pexxelina',iconKey:'icon_microscope',name:"The Scientist",subtitle:"Seeker of What Is True",desc:"Nothing satisfies you like the moment a hypothesis holds under scrutiny. You question assumptions, trust evidence, and refuse to accept 'probably' when 'certainly' is possible.",trait:"Curious · Methodical · Bold"},
-  Philosophy:  {owner:'pexxelina',iconKey:'icon_owl_big',name:"The Philosopher",subtitle:"Questioner of Questions",desc:"You never accept the first answer. You dig beneath assumptions, sit comfortably in uncertainty, and trust rigorous thinking over comfortable conclusions. Your sharpest tool is a well-placed 'but why?'",trait:"Reflective · Skeptical · Wise"},
-  Creative:    {owner:'pexxelina',iconKey:'icon_sparkle_big',name:"The Creator",subtitle:"World-Builder",desc:"You don't just experience reality — you reimagine it. Whether through writing, music, design, or ideas, you have an unstoppable need to make things that didn't exist before. Blank pages don't frighten you. They invite you.",trait:"Imaginative · Free · Original"},
+  Programming: {owner:'pxxelina',iconKey:'icon_laptop',name:"The Programmer",subtitle:"Architect of Logic",desc:"Your mind is a machine — elegant, precise, always looking for the most efficient path. You find deep satisfaction in turning abstract ideas into working systems. Where others see chaos, you see code waiting to be written.",trait:"Logical · Systematic · Builder"},
+  Maths:       {owner:'pxxelina',iconKey:'icon_infinity',name:"The Mathematician",subtitle:"Speaker of the Universe's Language",desc:"You see beauty in abstraction. To you, an elegant proof is as moving as a sunset. You think in structures and relationships — and feel most at home where everything is rigorous, complete, and undeniably true.",trait:"Abstract · Precise · Elegant"},
+  Physics:     {owner:'pxxelina',iconKey:'icon_atom',name:"The Physicist",subtitle:"Force Whisperer",desc:"You're never satisfied with surface explanations. You want the bedrock — the forces, fields, and fundamental laws beneath everything visible. Your mind reaches naturally toward the deepest questions reality offers.",trait:"Deep · Visionary · Fearless"},
+  Science:     {owner:'pxxelina',iconKey:'icon_microscope',name:"The Scientist",subtitle:"Seeker of What Is True",desc:"Nothing satisfies you like the moment a hypothesis holds under scrutiny. You question assumptions, trust evidence, and refuse to accept 'probably' when 'certainly' is possible.",trait:"Curious · Methodical · Bold"},
+  Philosophy:  {owner:'pxxelina',iconKey:'icon_owl_big',name:"The Philosopher",subtitle:"Questioner of Questions",desc:"You never accept the first answer. You dig beneath assumptions, sit comfortably in uncertainty, and trust rigorous thinking over comfortable conclusions. Your sharpest tool is a well-placed 'but why?'",trait:"Reflective · Skeptical · Wise"},
+  Creative:    {owner:'pxxelina',iconKey:'icon_sparkle_big',name:"The Creator",subtitle:"World-Builder",desc:"You don't just experience reality — you reimagine it. Whether through writing, music, design, or ideas, you have an unstoppable need to make things that didn't exist before. Blank pages don't frighten you. They invite you.",trait:"Imaginative · Free · Original"},
   Nature:      {owner:'skyonix',  iconKey:'icon_leaf_big',name:"The Naturalist",subtitle:"Child of the Living World",desc:"You think like a forest — slowly, deeply, in interconnected layers. Patient where others rush, observant where others overlook. You understand that the greatest truths grow rather than appear.",trait:"Patient · Grounded · Alive"},
   Color:       {owner:'skyonix',  iconKey:'icon_palette',name:"The Aesthete",subtitle:"Living Palette",desc:"Your world is saturated with meaning. You communicate through colour, form, and sensation — and you believe how something looks is part of what it means. Beauty, to you, is never decoration. It is information.",trait:"Expressive · Vivid · Intuitive"},
   PersonalDev: {owner:'skyonix',  iconKey:'icon_seedling',name:"The Cultivator",subtitle:"Eternal Apprentice",desc:"You treat life as a curriculum. Every setback is a lesson, every habit an experiment. You're driven by a quiet conviction that you can always be better — and you actually do the work to get there.",trait:"Disciplined · Growth-minded · Resilient"},
@@ -853,20 +1204,20 @@ const scenes=[
   {type:"dialogue",isTitle:true,text:"The Grove",sprite:"both",buttonText:"Enter",sound:"blip"},
   {type:"dialogue",isCreatorNote:true,text:"<strong>Creator Note:</strong> Find a comfy spot before you start — grab a drink, get cozy, and take your time with each question. This quiz works best when you answer from the gut, not the brain. Good luck, wanderer.",sprite:"both",buttonText:"Close",sound:"blip"},
   {type:"dialogue",speaker:"Skyonix",sprite:"skyonix",text:"Hey! I'm Skyonix, guardian of life, growth, and all things felt deeply. Welcome to the Grove.",fadeIn:true,buttonText:"Hello!",sound:"whoosh"},
-  {type:"dialogue",speaker:"Pexxelina",sprite:"pexxelina",text:"And I'm Pexxelina! Guardian of logic, creation, and the cosmos. So glad you found your way here.",fadeIn:true,buttonText:"Nice to meet you both!",sound:"whoosh"},
+  {type:"dialogue",speaker:"Pxxelina",sprite:"pxxelina",text:"And I'm Pxxelina! Guardian of logic, creation, and the cosmos. So glad you found your way here.",fadeIn:true,buttonText:"Nice to meet you both!",sound:"whoosh"},
   {type:"dialogue",speaker:"Skyonix",sprite:"skyonix",text:"Together, we tend to twelve paths of knowledge — each one shaped by a different kind of mind.",buttonText:"Tell me more",sound:"blip"},
-  {type:"dialogue",speaker:"Pexxelina",sprite:"pexxelina",text:"One of those paths belongs to you. Answer truthfully — not what sounds smart, but what feels honest. The Grove doesn't judge.",buttonText:"I understand",sound:"blip"},
+  {type:"dialogue",speaker:"Pxxelina",sprite:"pxxelina",text:"One of those paths belongs to you. Answer truthfully — not what sounds smart, but what feels honest. The Grove doesn't judge.",buttonText:"I understand",sound:"blip"},
   {type:"dialogue",speaker:"Skyonix",sprite:"skyonix",text:"Let's start simply — with how you live day to day.",buttonText:"Let's go!",sound:"chime"},
   {type:"question",text:"Your perfect free afternoon looks like:",options:[{text:"Building or coding something",cats:["Programming","Maths"]},{text:"A long walk somewhere green and quiet",cats:["Nature","Health"]},{text:"Reading or watching a documentary",cats:["Science","Philosophy"]},{text:"Creating — art, design, or writing",cats:["Creative","Color"]}]},
   {type:"question",text:"You feel most alive when:",options:[{text:"A system you built finally clicks into place",cats:["Programming","Maths"]},{text:"Surrounded by nature or people you love",cats:["Nature","Family"]},{text:"You've just understood something new",cats:["Science","Physics"]},{text:"Alone, deep in your own thoughts",cats:["Philosophy","Spirituality"]}]},
   {type:"question",text:"Pick the word that resonates most:",options:[{text:"Structure",cats:["Maths","Programming"]},{text:"Growth",cats:["Nature","PersonalDev"]},{text:"Wonder",cats:["Science","Physics"]},{text:"Stillness",cats:["Spirituality","Philosophy"]}]},
   {type:"question",text:"Your bookshelf or watch list leans toward:",options:[{text:"Tech, logic, or systems thinking",cats:["Programming","Science"]},{text:"Self-growth, wellness, or psychology",cats:["PersonalDev","Health"]},{text:"Art, design, or culture",cats:["Creative","Color"]},{text:"Philosophy, physics, or deep ideas",cats:["Physics","Philosophy"]}]},
-  {type:"dialogue",speaker:"Pexxelina",sprite:"pexxelina",text:"Interesting! Now let me ask a few things about how your mind works from the inside.",buttonText:"Sure!",sound:"chime"},
+  {type:"dialogue",speaker:"Pxxelina",sprite:"pxxelina",text:"Interesting! Now let me ask a few things about how your mind works from the inside.",buttonText:"Sure!",sound:"chime"},
   {type:"question",text:"Faced with a difficult problem, you:",options:[{text:"Break it into logical steps",cats:["Programming","Maths"]},{text:"Research and gather evidence first",cats:["Science","Physics"]},{text:"Sit quietly and let intuition guide you",cats:["Spirituality","Philosophy"]},{text:"Talk it through with someone you trust",cats:["Family","PersonalDev"]}]},
   {type:"question",text:"Which of these feels most true to you?",options:[{text:"Numbers reveal the fabric of everything",cats:["Maths","Physics"]},{text:"Questions matter more than answers",cats:["Philosophy","Science"]},{text:"The body and mind are deeply connected",cats:["Health","Spirituality"]},{text:"Creativity is the most human act there is",cats:["Creative","Color"]}]},
   {type:"question",text:"Your greatest natural strength is probably:",options:[{text:"Analytical precision and clear reasoning",cats:["Maths","Programming"]},{text:"Deep empathy and emotional intelligence",cats:["Family","PersonalDev"]},{text:"Imagination and completely original ideas",cats:["Creative","Color"]},{text:"Noticing patterns that others miss",cats:["Science","Nature"]}]},
   {type:"question",text:"The kind of problem you actually enjoy:",options:[{text:"A puzzle or algorithm to crack",cats:["Programming","Maths"]},{text:"A debate with no clean resolution",cats:["Philosophy","Physics"]},{text:"An open creative project with full freedom",cats:["Creative","Color"]},{text:"Understanding how a living system works",cats:["Nature","Science"]}]},
-  {type:"dialogue",speaker:"Pexxelina",sprite:"pexxelina",text:"These last questions go deeper. Answer from somewhere honest — the Grove is listening carefully.",buttonText:"I'm ready",sound:"chime"},
+  {type:"dialogue",speaker:"Pxxelina",sprite:"pxxelina",text:"These last questions go deeper. Answer from somewhere honest — the Grove is listening carefully.",buttonText:"I'm ready",sound:"chime"},
   {type:"question",text:"More than anything, you are driven by:",options:[{text:"Building things that actually work",cats:["Programming","Creative"]},{text:"Understanding the universe at its most fundamental",cats:["Physics","Science"]},{text:"Becoming the best version of yourself",cats:["PersonalDev","Health"]},{text:"Deep connection — to people or something greater",cats:["Family","Spirituality"]}]},
   {type:"question",text:"When overwhelmed, you instinctively:",options:[{text:"Create order — lists, plans, systems",cats:["Programming","Maths"]},{text:"Go outside or move your body",cats:["Nature","Health"]},{text:"Reflect, journal, or sit in silence",cats:["Spirituality","Philosophy"]},{text:"Reach out to someone close to you",cats:["Family","PersonalDev"]}]},
   {type:"question",text:"Your relationship with beauty:",options:[{text:"Elegant code and clean proofs are beautiful",cats:["Maths","Programming"]},{text:"I find it in living things and wild places",cats:["Nature","Spirituality"]},{text:"It lives in colour, form, and emotional truth",cats:["Color","Creative"]},{text:"In deep understanding of how reality works",cats:["Physics","Science"]}]},
@@ -931,11 +1282,11 @@ const sounds={
 ════════════════════════════════════════════ */
 let introSkyFrame=0,introPexFrame=0,introSpriteTimer=null;
 document.getElementById('intro-sky-sprite').innerHTML=PX.skyonix(0);
-document.getElementById('intro-pex-sprite').innerHTML=PX.pexxelina(0);
+document.getElementById('intro-pex-sprite').innerHTML=PX.pxxelina(0);
 introSpriteTimer=setInterval(()=>{
   introSkyFrame^=1;introPexFrame^=1;
   document.getElementById('intro-sky-sprite').innerHTML=PX.skyonix(introSkyFrame);
-  document.getElementById('intro-pex-sprite').innerHTML=PX.pexxelina(introPexFrame);
+  document.getElementById('intro-pex-sprite').innerHTML=PX.pxxelina(introPexFrame);
 },650);
 
 // Icon row — pixel SVGs instead of emojis
@@ -1202,9 +1553,41 @@ function enterGrove(){
 ════════════════════════════════════════════ */
 let currentScene=0,skyFrame=0,pexFrame=0,spriteTimer=null;
 
+function goHome(){
+  clearInterval(spriteTimer);
+  hideFeedbackFab();
+  currentResult='';
+  const textBox=document.getElementById("text-box"),container=document.getElementById("container"),
+        imageDiv=document.getElementById("image"),overlay=document.getElementById("overlay");
+  overlay.style.opacity=0;
+  textBox.classList.remove("results-active","title-font","question-font","dialogue-scene");
+  container.classList.remove("results-active");
+  imageDiv.innerHTML="";
+  document.getElementById("buttons").innerHTML="";
+  Object.keys(scores).forEach(k=>scores[k]=0);
+  currentScene=0;skyFrame=0;pexFrame=0;
+  document.getElementById('progress-bar-wrap').classList.remove('visible');
+  document.getElementById('progress-label').classList.remove('visible');
+  // Hide quiz body, show intro screen
+  document.getElementById('quiz-body').classList.remove('active');
+  document.getElementById('intro-screen').classList.remove('hidden');
+  document.body.classList.remove('theme-pxxelina');
+  document.body.classList.add('theme-skyonix');
+  // Restart intro sprites
+  clearInterval(introSpriteTimer);
+  introSkyFrame=0;introPexFrame=0;
+  document.getElementById('intro-sky-sprite').innerHTML=PX.skyonix(0);
+  document.getElementById('intro-pex-sprite').innerHTML=PX.pxxelina(0);
+  introSpriteTimer=setInterval(()=>{
+    introSkyFrame^=1;introPexFrame^=1;
+    document.getElementById('intro-sky-sprite').innerHTML=PX.skyonix(introSkyFrame);
+    document.getElementById('intro-pex-sprite').innerHTML=PX.pxxelina(introPexFrame);
+  },650);
+}
+
 function setTheme(who){
-  document.body.classList.remove('theme-skyonix','theme-pexxelina');
-  document.body.classList.add(who==='pexxelina'?'theme-pexxelina':'theme-skyonix');
+  document.body.classList.remove('theme-skyonix','theme-pxxelina');
+  document.body.classList.add(who==='pxxelina'?'theme-pxxelina':'theme-skyonix');
 }
 
 function renderSprite(scene,imageDiv){
@@ -1214,20 +1597,41 @@ function renderSprite(scene,imageDiv){
   if(scene.sprite==="both"){
     const dual=document.createElement("div");dual.className="dual-sprite";
     const wS=document.createElement("div");wS.className="sprite-wrap";wS.innerHTML=PX.skyonix(0);
-    const wP=document.createElement("div");wP.className="sprite-wrap delay";wP.innerHTML=PX.pexxelina(0);
+    const wP=document.createElement("div");wP.className="sprite-wrap delay";wP.innerHTML=PX.pxxelina(0);
     dual.appendChild(wS);dual.appendChild(wP);imageDiv.appendChild(dual);
     if(scene.fadeIn){dual.classList.add("fade-in");setTimeout(()=>dual.classList.add("show"),10);}
-    spriteTimer=setInterval(()=>{skyFrame^=1;pexFrame^=1;wS.innerHTML=PX.skyonix(skyFrame);wP.innerHTML=PX.pexxelina(pexFrame);},650);
+    spriteTimer=setInterval(()=>{skyFrame^=1;pexFrame^=1;wS.innerHTML=PX.skyonix(skyFrame);wP.innerHTML=PX.pxxelina(pexFrame);},650);
   } else if(scene.sprite==="skyonix"){
     const w=document.createElement("div");w.className="sprite-wrap";w.innerHTML=PX.skyonix(0);
     if(scene.fadeIn){w.classList.add("fade-in");setTimeout(()=>w.classList.add("show"),10);}
     imageDiv.appendChild(w);
     spriteTimer=setInterval(()=>{skyFrame^=1;w.innerHTML=PX.skyonix(skyFrame);},650);
-  } else if(scene.sprite==="pexxelina"){
-    const w=document.createElement("div");w.className="sprite-wrap";w.innerHTML=PX.pexxelina(0);
+  } else if(scene.sprite==="pxxelina"){
+    const w=document.createElement("div");w.className="sprite-wrap";w.innerHTML=PX.pxxelina(0);
     if(scene.fadeIn){w.classList.add("fade-in");setTimeout(()=>w.classList.add("show"),10);}
     imageDiv.appendChild(w);
-    spriteTimer=setInterval(()=>{pexFrame^=1;w.innerHTML=PX.pexxelina(pexFrame);},650);
+    spriteTimer=setInterval(()=>{pexFrame^=1;w.innerHTML=PX.pxxelina(pexFrame);},650);
+  }
+}
+
+// count total questions once
+const totalQuestions=scenes.filter(s=>s.type==="question").length;
+
+function updateProgressBar(scene){
+  const wrap=document.getElementById('progress-bar-wrap');
+  const fill=document.getElementById('progress-bar-fill');
+  const label=document.getElementById('progress-label');
+  if(scene.type==="question"){
+    // how many questions answered so far (scenes before current that are questions)
+    const answered=scenes.slice(0,currentScene).filter(s=>s.type==="question").length;
+    const pct=Math.round((answered/totalQuestions)*100);
+    wrap.classList.add('visible');
+    label.classList.add('visible');
+    fill.style.width=pct+'%';
+    label.textContent=`${answered} / ${totalQuestions}`;
+  } else {
+    wrap.classList.remove('visible');
+    label.classList.remove('visible');
   }
 }
 
@@ -1238,13 +1642,14 @@ function showScene(){
   const imageDiv=document.getElementById("image");
   textBox.classList.remove("title-font","question-font","dialogue-scene","results-active");
   buttonsDiv.innerHTML="";
+  updateProgressBar(scene);
   renderSprite(scene,imageDiv);
   if(scene.isTitle) textBox.classList.add("title-font");
   else if(scene.type==="question") textBox.classList.add("question-font");
   else if(!scene.isCreatorNote) textBox.classList.add("dialogue-scene");
   let spkHTML="";
   if(scene.speaker==="Skyonix") spkHTML='<span class="speaker-tag skyonix">Skyonix</span><br>';
-  else if(scene.speaker==="Pexxelina") spkHTML='<span class="speaker-tag pexxelina">Pexxelina</span><br>';
+  else if(scene.speaker==="Pxxelina") spkHTML='<span class="speaker-tag pxxelina">Pxxelina</span><br>';
   if(scene.isCreatorNote) textBox.innerHTML=`<div class="creator-note">${scene.text}</div>`;
   else if(scene.isTitle) textBox.textContent=scene.text;
   else textBox.innerHTML=spkHTML+scene.text;
@@ -1265,6 +1670,9 @@ function showScene(){
 
 function showResult(){
   clearInterval(spriteTimer);sounds.fanfare();
+  // hide progress bar
+  document.getElementById('progress-bar-wrap').classList.remove('visible');
+  document.getElementById('progress-label').classList.remove('visible');
   const textBox=document.getElementById("text-box"),container=document.getElementById("container"),
         buttonsDiv=document.getElementById("buttons"),imageDiv=document.getElementById("image"),
         overlay=document.getElementById("overlay");
@@ -1273,14 +1681,14 @@ function showResult(){
   overlay.style.opacity=1;imageDiv.innerHTML="";buttonsDiv.innerHTML="";
   const top=Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
   const data=resultData[top];const isSky=data.owner==="skyonix";
-  setTheme(isSky?'skyonix':'pexxelina');
+  setTheme(isSky?'skyonix':'pxxelina');
   textBox.textContent=`Your intellectual personality is ... the ${data.name}!`;
-  const rs=document.createElement("div");rs.className="sprite-wrap";rs.innerHTML=isSky?PX.skyonix(1):PX.pexxelina(1);
+  const rs=document.createElement("div");rs.className="sprite-wrap";rs.innerHTML=isSky?PX.skyonix(1):PX.pxxelina(1);
   rs.style.marginBottom="6px";imageDiv.appendChild(rs);
-  spriteTimer=setInterval(()=>{if(isSky){skyFrame^=1;rs.innerHTML=PX.skyonix(skyFrame);}else{pexFrame^=1;rs.innerHTML=PX.pexxelina(pexFrame);}},650);
+  spriteTimer=setInterval(()=>{if(isSky){skyFrame^=1;rs.innerHTML=PX.skyonix(skyFrame);}else{pexFrame^=1;rs.innerHTML=PX.pxxelina(pexFrame);}},650);
   const ownerEl=document.createElement("p");
   ownerEl.style.cssText=`font-size:0.75em;margin-bottom:14px;color:${isSky?"#3a7a2a":"#8a4a9a"};font-family:'Space Mono',monospace;`;
-  ownerEl.textContent=isSky?"✦ Revealed by Skyonix":"✦ Revealed by Pexxelina";buttonsDiv.appendChild(ownerEl);
+  ownerEl.textContent=isSky?"✦ Revealed by Skyonix":"✦ Revealed by Pxxelina";buttonsDiv.appendChild(ownerEl);
   // Big pixel icon
   const iconEl=document.createElement("div");iconEl.className="result-icon-display";
   iconEl.innerHTML=PX[data.iconKey]();buttonsDiv.appendChild(iconEl);
@@ -1290,13 +1698,31 @@ function showResult(){
   descEl.textContent=data.desc;buttonsDiv.appendChild(descEl);
   const traitEl=document.createElement("p");traitEl.style.cssText="font-size:0.8em;color:#4a7a2a;margin-bottom:26px;letter-spacing:1px;";
   traitEl.textContent=data.trait;buttonsDiv.appendChild(traitEl);
+  // record this result in storage for gallery counts
+  recordResultCount(top);
   const shareBtn=document.createElement("button");shareBtn.textContent="Share My Result";shareBtn.style.background="#4a7a2a";
   shareBtn.onclick=()=>{sounds.chime();openShareCard(data,isSky);};buttonsDiv.appendChild(shareBtn);
+  // Retake → resets scores and goes to quiz scene 0 (the Grove title / Enter scene)
+  const retakeBtn=document.createElement("button");retakeBtn.textContent="Retake the Quiz";
+  retakeBtn.onclick=()=>{
+    sounds.blip();clearInterval(spriteTimer);hideFeedbackFab();currentResult='';
+    overlay.style.opacity=0;
+    textBox.classList.remove("results-active");container.classList.remove("results-active");
+    imageDiv.innerHTML="";
+    Object.keys(scores).forEach(k=>scores[k]=0);
+    currentScene=0;skyFrame=0;pexFrame=0;
+    showScene();
+  };
+  buttonsDiv.appendChild(retakeBtn);
+  // Back to Home → real intro screen (night sky with Enter button)
   const homeBtn=document.createElement("button");homeBtn.textContent="Back to Home";
-  homeBtn.onclick=()=>{sounds.blip();clearInterval(spriteTimer);overlay.style.opacity=0;textBox.classList.remove("results-active");container.classList.remove("results-active");imageDiv.innerHTML="";Object.keys(scores).forEach(k=>scores[k]=0);currentScene=0;skyFrame=0;pexFrame=0;showScene();};
+  homeBtn.onclick=()=>{sounds.blip();goHome();};
   buttonsDiv.appendChild(homeBtn);
   const expBtn=document.createElement("button");expBtn.textContent="Explore All Personalities";
   expBtn.onclick=()=>{sounds.blip();showGallery();};buttonsDiv.appendChild(expBtn);
+  // Show FAB — isSky is known here, works for both Skyonix and Pxxelina
+  currentResult=data.name;
+  showFeedbackFab(isSky?'skyonix':'pxxelina');
 }
 
 /* SHARE CARD */
@@ -1305,7 +1731,7 @@ function openShareCard(data,isSky){
   document.getElementById("sc-name").textContent=data.name;
   document.getElementById("sc-subtitle").textContent=data.subtitle;
   document.getElementById("sc-trait").textContent=data.trait;
-  document.getElementById("sc-owner").textContent=isSky?"✦ Revealed by Skyonix":"✦ Revealed by Pexxelina";
+  document.getElementById("sc-owner").textContent=isSky?"✦ Revealed by Skyonix":"✦ Revealed by Pxxelina";
   document.getElementById("sc-owner").style.color=isSky?"#6aaa3a":"#c080d8";
   const dotsEl=document.getElementById("sc-dots");dotsEl.innerHTML="";
   const dc=isSky?["#3a6020","#4a8a28","#5aaa30","#7ec850","#c9a84c"]:["#6030a0","#8040c0","#c060d0","#e080e0","#c9a84c"];
@@ -1327,6 +1753,25 @@ document.getElementById("copy-text-btn").onclick=()=>{sounds.blip();const name=d
 document.getElementById("share-modal").addEventListener("click",(e)=>{if(e.target===document.getElementById("share-modal")){sounds.blip();closeShareCard();}});
 
 /* GALLERY */
+async function loadResultCounts(){
+  try{
+    const data=await window.storage.get('grove_result_counts',true);
+    if(data&&data.value) return JSON.parse(data.value);
+  }catch(e){}
+  return {};
+}
+async function recordResultCount(key){
+  try{
+    let counts={};
+    try{
+      const data=await window.storage.get('grove_result_counts',true);
+      if(data&&data.value) counts=JSON.parse(data.value);
+    }catch(e){}
+    counts[key]=(counts[key]||0)+1;
+    await window.storage.set('grove_result_counts',JSON.stringify(counts),true);
+  }catch(e){}
+}
+
 function showGallery(){
   clearInterval(spriteTimer);
   const textBox=document.getElementById("text-box"),container=document.getElementById("container"),
@@ -1339,25 +1784,281 @@ function showGallery(){
   skyLabel.textContent="✦ Skyonix's Paths — Life & Heart";buttonsDiv.appendChild(skyLabel);
   const skyGrid=document.createElement("div");skyGrid.className="result-gallery";skyGrid.style.borderColor="#4a7a2a";
   const pexLabel=document.createElement("p");pexLabel.style.cssText="font-size:0.8em;color:#8a4a9a;margin:16px auto 10px;font-family:'Space Mono',monospace;";
-  pexLabel.textContent="✦ Pexxelina's Paths — Logic & Creation";
+  pexLabel.textContent="✦ Pxxelina's Paths — Logic & Creation";
   const pexGrid=document.createElement("div");pexGrid.className="result-gallery";pexGrid.style.borderColor="#9a5aaa";
+
+  // Build cards immediately, then populate counts async
+  const cardMap={};
   Object.entries(resultData).forEach(([key,d])=>{
     const card=document.createElement("div");card.className="result-card";
-    if(d.owner==="pexxelina")card.style.borderColor="#9a5aaa";
+    if(d.owner==="pxxelina")card.style.borderColor="#9a5aaa";
     const iconDiv=document.createElement("div");iconDiv.className="card-icon";iconDiv.innerHTML=PX[d.iconKey]();
     card.appendChild(iconDiv);
-    card.innerHTML+=`<div class="card-name">${d.name}</div><div class="card-trait">${d.trait}</div>`;
+    const countBadge=document.createElement("span");countBadge.className="result-count-badge";
+    countBadge.id="count-"+key;countBadge.textContent="";
+    card.appendChild(countBadge);
+    const nameDiv=document.createElement("div");nameDiv.className="card-name";nameDiv.textContent=d.name;card.appendChild(nameDiv);
+    const traitDiv=document.createElement("div");traitDiv.className="card-trait";traitDiv.textContent=d.trait;card.appendChild(traitDiv);
+    // Description (hidden, togglable)
+    const descDiv=document.createElement("div");descDiv.className="card-desc";descDiv.textContent=d.desc;card.appendChild(descDiv);
+    const toggle=document.createElement("button");toggle.className="card-toggle";toggle.textContent="▾ read more";
+    toggle.onclick=()=>{
+      const expanded=card.classList.toggle("expanded");
+      toggle.textContent=expanded?"▴ close":"▾ read more";
+      sounds.blip();
+    };
+    card.appendChild(toggle);
+    cardMap[key]=countBadge;
     if(d.owner==="skyonix")skyGrid.appendChild(card);else pexGrid.appendChild(card);
   });
+
   buttonsDiv.appendChild(skyGrid);buttonsDiv.appendChild(pexLabel);buttonsDiv.appendChild(pexGrid);
   const back=document.createElement("button");back.textContent="Back to Home";
   back.onclick=()=>{sounds.blip();Object.keys(scores).forEach(k=>scores[k]=0);currentScene=0;skyFrame=0;pexFrame=0;textBox.className="";showScene();};
   buttonsDiv.appendChild(back);
+
+  // Load counts and fill in badges
+  loadResultCounts().then(counts=>{
+    Object.entries(counts).forEach(([key,n])=>{
+      if(cardMap[key]&&n>0) cardMap[key].textContent=`${n} wanderer${n===1?'':'s'}`;
+    });
+  });
 }
 
 /* VIEWPORT */
 function setVh(){document.documentElement.style.setProperty("--vh",`${window.innerHeight*0.01}px`);}
 window.addEventListener("resize",setVh);window.addEventListener("load",setVh);setVh();
+
+/* ════════════════════════════════════════════
+   FEEDBACK SYSTEM
+════════════════════════════════════════════ */
+
+// Build stars in feedback panel
+(function(){
+  const c=document.getElementById('fb-stars');
+  for(let i=0;i<40;i++){
+    const s=document.createElement('div');s.className='fb-star';
+    const sz=[2,2,3,4][Math.floor(Math.random()*4)];
+    const col=['#c060f0','#9040c0','#60a0f0','#f060a0','#e0d0ff'][Math.floor(Math.random()*5)];
+    s.style.cssText=`width:${sz}px;height:${sz}px;background:${col};left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${1.5+Math.random()*3}s;animation-delay:${-Math.random()*4}s;`;
+    c.appendChild(s);
+  }
+})();
+
+let selectedMood='';
+let currentResult='';// set when result shown
+
+/* ── FAB SVG BUILDERS ── */
+function fabSvgSky(){
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58" width="58" height="58" style="image-rendering:pixelated;display:block">
+    <rect x="5"  y="9"  width="48" height="32" fill="#1a2e0c"/>
+    <rect x="3"  y="11" width="4"  height="28" fill="#1a2e0c"/>
+    <rect x="51" y="11" width="4"  height="28" fill="#1a2e0c"/>
+    <rect x="7"  y="7"  width="44" height="4"  fill="#2a4418"/>
+    <rect x="7"  y="39" width="44" height="4"  fill="#2a4418"/>
+    <rect x="5"  y="9"  width="48" height="32" fill="none" stroke="#6aaa3a" stroke-width="2"/>
+    <rect x="9"  y="13" width="40" height="24" fill="#0e1e08" opacity="0.92"/>
+    <rect x="13" y="19" width="6"  height="10" fill="#4a8a28"/>
+    <rect x="11" y="21" width="4"  height="6"  fill="#4a8a28"/>
+    <rect x="17" y="21" width="4"  height="6"  fill="#4a8a28"/>
+    <rect x="13" y="17" width="6"  height="4"  fill="#5aaa30"/>
+    <rect x="14" y="16" width="2"  height="2"  fill="#7ec850" opacity="0.8"/>
+    <rect x="24" y="18" width="20" height="3" fill="#6aaa3a" opacity="0.95"/>
+    <rect x="24" y="24" width="16" height="3" fill="#4a8a28" opacity="0.75"/>
+    <rect x="24" y="30" width="12" height="3" fill="#3a6a20" opacity="0.6"/>
+    <rect x="43" y="29" width="3"  height="3" fill="#c8f090"/>
+    <rect x="15" y="43" width="6"  height="4"  fill="#2a4418"/>
+    <rect x="13" y="45" width="6"  height="4"  fill="#2a4418"/>
+    <rect x="11" y="47" width="5"  height="3"  fill="#1a2e0c"/>
+    <rect x="9"  y="13" width="38" height="2"  fill="#6aaa3a" opacity="0.18"/>
+  </svg>`;
+}
+function fabSvgPxx(){
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58" width="58" height="58" style="image-rendering:pixelated;display:block">
+    <rect x="5"  y="9"  width="48" height="32" fill="#1a0838"/>
+    <rect x="3"  y="11" width="4"  height="28" fill="#1a0838"/>
+    <rect x="51" y="11" width="4"  height="28" fill="#1a0838"/>
+    <rect x="7"  y="7"  width="44" height="4"  fill="#2e1060"/>
+    <rect x="7"  y="39" width="44" height="4"  fill="#2e1060"/>
+    <rect x="5"  y="9"  width="48" height="32" fill="none" stroke="#c060f0" stroke-width="2"/>
+    <rect x="9"  y="13" width="40" height="24" fill="#0c0420" opacity="0.92"/>
+    <rect x="13" y="18" width="2"  height="8"  fill="#c060f0"/>
+    <rect x="11" y="20" width="6"  height="4"  fill="#c060f0"/>
+    <rect x="14" y="17" width="2"  height="2"  fill="#f0d0ff"/>
+    <rect x="14" y="25" width="2"  height="2"  fill="#f0d0ff"/>
+    <rect x="11" y="21" width="2"  height="2"  fill="#f0d0ff" opacity="0.5"/>
+    <rect x="17" y="21" width="2"  height="2"  fill="#f0d0ff" opacity="0.5"/>
+    <rect x="24" y="18" width="20" height="3" fill="#c060f0" opacity="0.95"/>
+    <rect x="24" y="24" width="16" height="3" fill="#9040c0" opacity="0.75"/>
+    <rect x="24" y="30" width="12" height="3" fill="#6030a0" opacity="0.6"/>
+    <rect x="42" y="29" width="2"  height="4" fill="#f060a0"/>
+    <rect x="40" y="31" width="6"  height="2" fill="#f060a0"/>
+    <rect x="15" y="43" width="6"  height="4"  fill="#2e1060"/>
+    <rect x="13" y="45" width="6"  height="4"  fill="#2e1060"/>
+    <rect x="11" y="47" width="5"  height="3"  fill="#1a0838"/>
+    <rect x="9"  y="13" width="38" height="2"  fill="#c060f0" opacity="0.18"/>
+  </svg>`;
+}
+
+function showFeedbackFab(theme){
+  const fab=document.getElementById('feedback-fab');
+  const inner=document.getElementById('fab-inner');
+  fab.classList.remove('sky','pxx');
+  const isSky=(theme==='skyonix');
+  fab.classList.add(isSky?'sky':'pxx');
+  inner.innerHTML=isSky?fabSvgSky():fabSvgPxx();
+  fab.classList.remove('visible');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>fab.classList.add('visible')));
+}
+function hideFeedbackFab(){
+  const fab=document.getElementById('feedback-fab');
+  fab.classList.remove('visible','sky','pxx');
+}
+
+// ── UPDATED openFeedback: applies Skyonix green theme to the panel ──
+function openFeedback(){
+  sounds.chime();
+  const panel=document.getElementById('feedback-panel');
+  const isSky=document.body.classList.contains('theme-skyonix');
+  panel.classList.toggle('fb-panel-sky', isSky);
+  // Re-colour the background star dots to match the active theme
+  document.querySelectorAll('.fb-star').forEach(s=>{
+    const skyC=['#6aaa3a','#4a8a28','#90e060','#c8f090','#7ec850'];
+    const pxxC=['#c060f0','#9040c0','#60a0f0','#f060a0','#e0d0ff'];
+    s.style.background=(isSky?skyC:pxxC)[Math.floor(Math.random()*5)];
+  });
+  document.getElementById('feedback-modal').classList.add('open');
+  switchFbTab('write');
+}
+function closeFeedback(){
+  sounds.blip();
+  document.getElementById('feedback-modal').classList.remove('open');
+}
+document.getElementById('feedback-modal').addEventListener('click',function(e){
+  if(e.target===this){sounds.blip();closeFeedback();}
+});
+
+function switchFbTab(tab){
+  document.getElementById('fb-tab-write').classList.toggle('active',tab==='write');
+  document.getElementById('fb-tab-read').classList.toggle('active',tab==='read');
+  document.getElementById('fb-write-pane').style.display=tab==='write'?'flex':'none';
+  document.getElementById('fb-read-pane').style.display=tab==='read'?'block':'none';
+  if(tab==='read') loadMessages();
+}
+
+function selectMood(btn){
+  document.querySelectorAll('.fb-mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedMood=btn.dataset.mood;
+  sounds.blip();
+}
+
+function updateCharCount(){
+  const t=document.getElementById('fb-text').value.length;
+  document.getElementById('fb-char-count').textContent=`${t} / 280`;
+}
+
+function resetFeedbackForm(){
+  document.getElementById('fb-success').classList.remove('show');
+  document.getElementById('fb-write-pane').style.display='flex';
+  document.getElementById('fb-text').value='';
+  document.getElementById('fb-name').value='';
+  document.querySelectorAll('.fb-mood-btn').forEach(b=>b.classList.remove('selected'));
+  selectedMood='';
+  updateCharCount();
+}
+
+async function submitFeedback(){
+  const name=(document.getElementById('fb-name').value.trim()||'Wanderer').slice(0,30);
+  const text=document.getElementById('fb-text').value.trim();
+  if(!text){
+    document.getElementById('fb-text').style.borderColor='#f060a0';
+    setTimeout(()=>{document.getElementById('fb-text').style.borderColor='';},1200);
+    return;
+  }
+  const btn=document.getElementById('fb-submit-btn');
+  btn.disabled=true;btn.textContent='Sending...';
+
+  const msg={
+    id:Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    name,
+    mood:selectedMood||'peaceful',
+    result:currentResult||'Unknown',
+    text,
+    ts:Date.now()
+  };
+
+  try{
+    let msgs=[];
+    try{
+      const existing=await window.storage.get('grove_messages',true);
+      if(existing&&existing.value) msgs=JSON.parse(existing.value);
+    }catch(e){msgs=[];}
+    msgs.unshift(msg);
+    if(msgs.length>200) msgs=msgs.slice(0,200);
+    await window.storage.set('grove_messages',JSON.stringify(msgs),true);
+    sounds.fanfare();
+    document.getElementById('fb-write-pane').style.display='none';
+    const succ=document.getElementById('fb-success');
+    succ.classList.add('show');
+  }catch(e){
+    sounds.fanfare();
+    document.getElementById('fb-write-pane').style.display='none';
+    document.getElementById('fb-success').classList.add('show');
+  }
+  btn.disabled=false;btn.textContent='&#9658; Send to the Grove';
+}
+
+const moodIcons={loved:'♥',mindblown:'✦',peaceful:'✿',thinking:'◈',lost:'◎'};
+const moodLabels={loved:'loved it',mindblown:'mind blown',peaceful:'at peace',thinking:'thinking...',lost:'a bit lost'};
+
+function timeAgo(ts){
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60) return 'just now';
+  if(s<3600) return Math.floor(s/60)+'m ago';
+  if(s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+
+async function loadMessages(){
+  const list=document.getElementById('fb-messages-list');
+  const loading=document.getElementById('fb-loading');
+  const empty=document.getElementById('fb-empty');
+  const count=document.getElementById('fb-msg-count');
+  list.innerHTML='';loading.style.display='block';empty.style.display='none';count.textContent='';
+  let msgs=[];
+  try{
+    const data=await window.storage.get('grove_messages',true);
+    if(data&&data.value) msgs=JSON.parse(data.value);
+  }catch(e){msgs=[];}
+  loading.style.display='none';
+  if(!msgs.length){empty.style.display='block';return;}
+  count.textContent=`${msgs.length} whisper${msgs.length===1?'':'s'} in the Grove`;
+  msgs.forEach((msg,i)=>{
+    const card=document.createElement('div');
+    card.className=`fb-msg-card mood-${msg.mood||'peaceful'}`;
+    card.style.animationDelay=(i*0.06)+'s';
+    const icon=moodIcons[msg.mood]||'✿';
+    const label=moodLabels[msg.mood]||msg.mood||'';
+    card.innerHTML=`
+      <div class="fb-msg-meta">
+        <span class="fb-msg-name">${escapeHtml(msg.name||'Wanderer')}</span>
+        <span class="fb-msg-mood">${icon} ${label}</span>
+        <span class="fb-msg-result">${escapeHtml(msg.result||'')}</span>
+        <span class="fb-msg-time">${timeAgo(msg.ts)}</span>
+      </div>
+      <div class="fb-msg-text">${escapeHtml(msg.text)}</div>`;
+    list.appendChild(card);
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+
+
 </script>
 </body>
 </html>
