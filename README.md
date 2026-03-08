@@ -102,7 +102,7 @@ Two pixel characters wait quietly.
 
 You press **"Enter the Grove"**, and the journey begins.
 
-Before the questions start, the guides speak and welcome you.
+Before the questions start, the guides welcome you.
 
 The quiz includes:
 
@@ -110,7 +110,7 @@ The quiz includes:
 * **3 rounds**
 * **4 answers per question**
 
-The questions start light and gradually explore **how you think, create, and understand the world**.
+The questions slowly evolve from light reflections to deeper ones about **how you think and explore the world**.
 
 ---
 
@@ -124,7 +124,7 @@ The site transforms:
 👾 Your personality sprite appears
 📜 Your title and description are revealed
 
-You also unlock a **shareable personality card** that can be copied or shared.
+You also unlock a **shareable personality card** you can copy or share.
 
 ---
 
@@ -138,29 +138,19 @@ Each personality card shows:
 * Description
 * Three defining traits
 
-The Grove also displays **how many wanderers discovered each path**.
+The Grove also tracks **how many wanderers discovered each path**.
 
 ---
 
 # 💬 Grove Whispers
 
-Hidden in the corner is a floating pixel button.
-
-Opening it reveals **Grove Whispers**, a small message board where visitors can leave thoughts.
+A floating pixel button opens **Grove Whispers**, a small message board where wanderers leave thoughts after their journey.
 
 Visitors can:
 
 ✍️ Leave their **name**
 🙂 Choose a **mood**
-💬 Write a **message for other wanderers**
-
-Mood options include:
-
-* Loved it
-* Mind blown
-* At peace
-* Thinking...
-* A bit lost
+💬 Write a **message**
 
 Messages appear instantly in the **community feed**, and users can **delete their own messages**.
 
@@ -175,40 +165,61 @@ or
 
 **localStorage** — during local testing.
 
-Once Firebase is connected, whispers become **shared across all visitors**.
+Once Firebase is connected, whispers become **shared between visitors**.
 
 ---
 
 # ✨ Features
 
+<table>
+<tr>
+<td width="50%">
+
 ### 🎮 Core Experience
 
 * Narrative personality quiz
-* 13 reflective questions across 3 rounds
-* Character dialogue guiding the experience
+* 13 questions across 3 rounds
+* Character dialogue guiding the journey
 * 12 unique intellectual personalities
+
+</td>
+
+<td width="50%">
 
 ### 🎨 Visual Design
 
 * Pixel-art RPG aesthetic
 * Animated character sprites
 * Cinematic intro scene
-* Dynamic theme switching (green / purple)
+* Dynamic theme switching
+
+</td>
+</tr>
+
+<tr>
+<td width="50%">
 
 ### 🌍 Interactive Elements
 
 * Shareable personality result card
 * Personality gallery
 * Wanderer result counters
-* Grove Whispers community board
+* Grove Whispers message board
+
+</td>
+
+<td width="50%">
 
 ### ⚙️ Technical Details
 
-* Firebase Firestore message storage
-* localStorage fallback for testing
+* Firebase Firestore integration
+* localStorage fallback
 * Fully responsive design
-* Built in **a single HTML file**
-* **No frameworks — pure HTML, CSS, JavaScript**
+* Built with **pure HTML, CSS, JavaScript**
+
+</td>
+</tr>
+</table>
 
 ---
 
@@ -217,13 +228,13 @@ Once Firebase is connected, whispers become **shared across all visitors**.
 <p align="center">
 
 <a href="https://github.com/SkyonixTheKing23">
-<img src="https://img.shields.io/badge/Skyonix-181717?style=for-the-badge&logo=github&logoColor=white&labelColor=1f6feb">
+<img src="https://img.shields.io/badge/Skyonix-GitHub-1f6feb?style=for-the-badge&logo=github&logoColor=white">
 </a>
 
-   
+      
 
 <a href="https://github.com/pxxelina">
-<img src="https://img.shields.io/badge/Pxxelina-181717?style=for-the-badge&logo=github&logoColor=white&labelColor=7c3aed">
+<img src="https://img.shields.io/badge/Pxxelina-GitHub-7c3aed?style=for-the-badge&logo=github&logoColor=white">
 </a>
 
 </p>
@@ -235,4 +246,5 @@ Once Firebase is connected, whispers become **shared across all visitors**.
 </p>
 
 <p align="center">
-© 2026 Skyonix & Pxxe
+© 2026 Skyonix & Pxxelina
+</p>
